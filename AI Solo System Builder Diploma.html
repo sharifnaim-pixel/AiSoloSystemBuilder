@@ -1,0 +1,1190 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>AI Solo System Builder Diploma</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&family=Readex+Pro:wght@300;400;500;600&display=swap">
+<style>
+/* Layout: each slide is a print artboard on a grey pasteboard, with crop marks and a CMYK colour bar.
+   Level colours follow the print inks: P0 magenta (brand), P1 cyan (campaign), P2 yellow (specialisation), key = shared topics. */
+:root{
+  --paper:#EEF1F5; --surface:#FFFFFF; --ink:#151A28; --muted:#586078; --line:#D3D9E3;
+  --m:#D81B6A; --c:#0889C2; --y:#F0B000;
+  --m-ink:#B5125A; --c-ink:#066E9C; --y-ink:#8A6200;
+  --font-display:"Alexandria","Readex Pro",Tahoma,"Segoe UI",sans-serif;
+  --font-body:"Readex Pro","Segoe UI",Tahoma,Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E121C; --surface:#171D2B; --ink:#E8EBF2; --muted:#9AA2B7; --line:#2B3347;
+    --m:#FF4D94; --c:#2FB2EB; --y:#FFC633; --m-ink:#FF7DB2; --c-ink:#71CDF3; --y-ink:#FFD45E;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E121C; --surface:#171D2B; --ink:#E8EBF2; --muted:#9AA2B7; --line:#2B3347;
+  --m:#FF4D94; --c:#2FB2EB; --y:#FFC633; --m-ink:#FF7DB2; --c-ink:#71CDF3; --y-ink:#FFD45E;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{
+  margin:0; background:var(--paper); color:var(--ink); font-family:var(--font-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px));
+  -webkit-font-smoothing:antialiased;
+}
+.app{height:100%;display:flex;flex-direction:column}
+.viewport{flex:1;min-height:0;container-type:size;display:grid;place-items:center;padding-block:14px 6px}
+.stage{
+  position:relative; width:min(100cqw, calc(100cqh * 16 / 9)); aspect-ratio:16/9; max-width:100%;
+  background:var(--surface); container-type:size;
+  box-shadow:0 0 0 1px var(--line), 0 24px 60px -30px color-mix(in srgb,var(--ink) 45%,transparent);
+  --t-giant:10.5cqw; --t-hero:5.2cqw; --t-h1:3cqw; --t-h2:1.85cqw; --t-lg:1.5cqw; --t-body:1.28cqw; --t-sm:1.1cqw; --t-xs:.95cqw;
+  --pad-x:4.2cqw; --pad-t:3.2cqw; --pad-b:5cqw; --gap:1.6cqw; --gap-s:.8cqw;
+}
+
+/* ---------- slide ---------- */
+.slide{
+  position:absolute; inset:0; padding:var(--pad-t) var(--pad-x) var(--pad-b);
+  display:flex; flex-direction:column; gap:var(--gap);
+  opacity:0; visibility:hidden; transition:opacity .35s ease, visibility 0s linear .35s; overflow:hidden;
+  --lv:var(--ink); --lv-ink:var(--ink);
+}
+.slide.is-active{opacity:1;visibility:visible;transition:opacity .35s ease}
+.slide[data-level="p0"]{--lv:var(--m);--lv-ink:var(--m-ink)}
+.slide[data-level="p1"]{--lv:var(--c);--lv-ink:var(--c-ink)}
+.slide[data-level="p2"]{--lv:var(--y);--lv-ink:var(--y-ink)}
+.slide{--lv-tint:color-mix(in srgb,var(--lv) 13%,var(--surface))}
+@media (prefers-reduced-motion: reduce){.slide,.slide.is-active{transition:none}}
+
+.marks i{position:absolute;width:1.5cqw;height:1.5cqw;border-color:color-mix(in srgb,var(--muted) 60%,transparent);border-style:solid;border-width:0}
+.marks i:nth-child(1){top:1.1cqw;right:1.1cqw;border-top-width:1px;border-right-width:1px}
+.marks i:nth-child(2){top:1.1cqw;left:1.1cqw;border-top-width:1px;border-left-width:1px}
+.marks i:nth-child(3){bottom:1.1cqw;right:1.1cqw;border-bottom-width:1px;border-right-width:1px}
+.marks i:nth-child(4){bottom:1.1cqw;left:1.1cqw;border-bottom-width:1px;border-left-width:1px}
+
+.s-foot{position:absolute;right:var(--pad-x);left:var(--pad-x);bottom:1.7cqw;display:flex;justify-content:space-between;align-items:center;font-size:var(--t-xs);color:var(--muted);gap:2cqw}
+.s-foot .who{display:flex;align-items:center;gap:1cqw}
+.cmyk{display:inline-flex;gap:2px}
+.cmyk b{width:.75cqw;height:.75cqw;display:block;opacity:.28}
+.cmyk b:nth-child(1){background:var(--c)} .cmyk b:nth-child(2){background:var(--m)} .cmyk b:nth-child(3){background:var(--y)} .cmyk b:nth-child(4){background:var(--ink)}
+.slide[data-level="p1"] .cmyk b:nth-child(1),.slide[data-level="p0"] .cmyk b:nth-child(2),.slide[data-level="p2"] .cmyk b:nth-child(3),.slide[data-level="k"] .cmyk b:nth-child(4){opacity:1}
+.s-foot .num{font-variant-numeric:tabular-nums;direction:ltr}
+
+/* ---------- type ---------- */
+h1,h2,h3,p{margin:0}
+.tag{display:inline-flex;align-items:center;gap:.6cqw;font-size:var(--t-sm);font-weight:500;color:var(--lv-ink)}
+.tag::before{content:"";width:.85cqw;height:.85cqw;background:var(--lv);flex:none}
+.slide[data-level="k"] .tag::before{background:var(--ink)}
+h2{font-family:var(--font-display);font-size:var(--t-h1);font-weight:700;line-height:1.25;text-wrap:balance;letter-spacing:-.005em}
+h3{font-family:var(--font-display);font-size:var(--t-lg);font-weight:600;line-height:1.35}
+.s-head{display:flex;flex-direction:column;gap:.55cqw}
+.s-head p{font-size:var(--t-body);color:var(--muted);max-width:70ch;line-height:1.6}
+.en{direction:ltr;unicode-bidi:isolate}
+.muted{color:var(--muted)}
+.lead{font-size:var(--t-lg);line-height:1.65;max-width:42ch}
+.small{font-size:var(--t-sm);line-height:1.6}
+.xs{font-size:var(--t-xs);line-height:1.55}
+.note{font-size:var(--t-xs);color:var(--muted);line-height:1.6}
+.num{font-variant-numeric:tabular-nums}
+
+/* ---------- layout helpers ---------- */
+.s-body{flex:1;min-height:0;display:grid;gap:var(--gap);align-content:start}
+.row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:3cqw}
+.row2.wide-r{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}
+.row3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2cqw}
+.stack{display:flex;flex-direction:column;gap:var(--gap-s);min-width:0}
+.stack.lg{gap:var(--gap)}
+.panel{background:var(--paper);padding:1.3cqw 1.5cqw;display:flex;flex-direction:column;gap:.6cqw;min-width:0}
+.panel h3{font-size:var(--t-body)}
+
+/* ---------- divider (level / topic opener) ---------- */
+.divider{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:3.2cqw;align-items:center;flex:1;min-height:0}
+.lv-code{font-family:var(--font-display);font-size:var(--t-giant);font-weight:800;line-height:.9;color:var(--lv);direction:ltr;text-align:right;letter-spacing:-.03em}
+.slide[data-level="k"] .lv-code{color:var(--ink)}
+.d-title{font-family:var(--font-display);font-size:var(--t-hero);font-weight:700;line-height:1.15;text-wrap:balance}
+.d-en{font-size:var(--t-body);color:var(--muted)}
+.meta{display:flex;gap:2.6cqw;flex-wrap:wrap}
+.meta div{display:flex;flex-direction:column;gap:.15cqw}
+.meta strong{font-family:var(--font-display);font-size:var(--t-h2);font-weight:700;font-variant-numeric:tabular-nums}
+.meta span{font-size:var(--t-xs);color:var(--muted)}
+.olist{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.45cqw 2cqw;font-size:var(--t-sm);line-height:1.5}
+.olist li{display:flex;gap:.7cqw;align-items:baseline}
+.olist li::before{content:"";width:.6cqw;height:.6cqw;background:var(--lv);flex:none;transform:translateY(-.15cqw)}
+.slide[data-level="k"] .olist li::before{background:var(--ink)}
+.olist.one{grid-template-columns:1fr}
+
+.art{margin:0;background:var(--paper);padding:1.4cqw;display:flex;flex-direction:column;gap:.8cqw;min-width:0;position:relative}
+.art svg{width:100%;height:auto;max-height:64cqh;display:block}
+.art figcaption{display:flex;justify-content:space-between;gap:1cqw;font-size:var(--t-xs);color:var(--muted)}
+.art figcaption b{color:var(--ink);font-weight:600}
+.art::before,.art::after{content:"";position:absolute;width:1cqw;height:1cqw;border:0 solid var(--lv)}
+.art::before{top:-.5cqw;right:-.5cqw;border-top-width:2px;border-right-width:2px}
+.art::after{bottom:-.5cqw;left:-.5cqw;border-bottom-width:2px;border-left-width:2px}
+.slide[data-level="k"] .art::before,.slide[data-level="k"] .art::after{border-color:var(--ink)}
+
+/* ---------- svg palette ---------- */
+svg text{font-family:var(--font-body)}
+.fs{fill:var(--surface)} .fp{fill:var(--paper)} .fi{fill:var(--ink)} .fmu{fill:var(--muted)} .fl{fill:var(--line)}
+.fm{fill:var(--m)} .fc{fill:var(--c)} .fy{fill:var(--y)}
+.tm{fill:color-mix(in srgb,var(--m) 20%,var(--surface))} .tc{fill:color-mix(in srgb,var(--c) 20%,var(--surface))} .ty{fill:color-mix(in srgb,var(--y) 26%,var(--surface))}
+.st{stroke:var(--line);stroke-width:1.5} .nf{fill:none}
+.sk-c{stroke:var(--c)} .sk-m{stroke:var(--m)} .sk-i{stroke:var(--ink)}
+.disp{font-family:var(--font-display);font-weight:700}
+
+/* ---------- course table ---------- */
+.ctable{display:grid;grid-template-columns:auto minmax(0,1.55fr) minmax(0,.9fr) auto minmax(0,1.9fr);column-gap:1.4cqw;align-items:center;font-size:var(--t-sm)}
+.ctable > div{display:contents}
+.ctable > div > *{padding-block:.5cqw;border-bottom:1px solid var(--line);min-width:0;line-height:1.4}
+.ctable .hd > *{font-size:var(--t-xs);color:var(--muted);padding-block:.3cqw .45cqw}
+.ctable .tot > *{border-bottom:0;font-weight:600;padding-top:.7cqw}
+.code{font-weight:600;color:var(--lv-ink);direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cname{display:flex;flex-direction:column}
+.cname .en{font-weight:500}
+.cname .ar{font-size:var(--t-xs);color:var(--muted)}
+.hrs{font-weight:600;font-variant-numeric:tabular-nums;text-align:left;white-space:nowrap}
+.out{font-size:var(--t-xs);color:var(--muted)}
+.new{display:inline-block;font-size:.8em;font-weight:600;color:var(--lv-ink);background:var(--lv-tint);padding:0 .5em;margin-inline-start:.4em;vertical-align:.1em}
+.bar{height:.95cqw;background:var(--paper);display:block;position:relative}
+.bar i{position:absolute;inset-block:0;right:0;width:var(--w);display:flex}
+.bar i b{display:block;height:100%}
+.bar i b.th{width:var(--t);background:repeating-linear-gradient(-45deg,var(--lv) 0 2px,transparent 2px 5px);box-shadow:inset 0 0 0 1px var(--lv)}
+.bar i b.pr{flex:1;background:var(--lv)}
+.legend{display:flex;gap:1.8cqw;font-size:var(--t-xs);color:var(--muted);align-items:center;flex-wrap:wrap}
+.legend span{display:inline-flex;gap:.5cqw;align-items:center}
+.sw{width:1.6cqw;height:.85cqw;display:inline-block;background:var(--lv)}
+.sw.th{background:repeating-linear-gradient(-45deg,var(--lv) 0 2px,transparent 2px 5px);box-shadow:inset 0 0 0 1px var(--lv)}
+
+/* ---------- week grid ---------- */
+.weeks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:1fr;gap:.6cqw;flex:1;min-height:0}
+.wk{background:var(--paper);padding:.75cqw 1cqw;display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:.9cqw;row-gap:.15cqw;align-content:start;position:relative;min-width:0}
+.wk .n{grid-row:span 3;font-family:var(--font-display);font-size:var(--t-h2);font-weight:700;color:var(--lv-ink);line-height:1;font-variant-numeric:tabular-nums;min-width:2.2cqw}
+.wk .f{font-weight:600;font-size:var(--t-sm);line-height:1.35}
+.wk .o{font-size:var(--t-xs);color:var(--ink);opacity:.8;line-height:1.4}
+.wk .a{font-size:var(--t-xs);color:var(--lv-ink);line-height:1.4}
+.wk .g{position:absolute;top:.6cqw;left:.6cqw;font-size:var(--t-xs);font-weight:600;background:var(--ink);color:var(--surface);padding:.05cqw .55cqw;direction:ltr}
+.wk.hl{background:var(--lv-tint)}
+
+/* ---------- generic bar lists ---------- */
+.hbars{display:flex;flex-direction:column;gap:.75cqw}
+.hb{display:grid;grid-template-columns:minmax(0,11cqw) minmax(0,1fr) 3.4cqw;gap:1cqw;align-items:center;font-size:var(--t-sm)}
+.hb .track{height:1.1cqw;background:var(--paper);position:relative}
+.hb .track i{position:absolute;inset-block:0;right:0;width:var(--w);background:var(--lv)}
+.hb .v{font-variant-numeric:tabular-nums;font-weight:600;text-align:left}
+.stackbar{display:flex;height:2.4cqw;width:100%}
+.stackbar span{display:flex;align-items:center;justify-content:center;font-size:var(--t-xs);font-weight:600;color:var(--surface);overflow:hidden;white-space:nowrap}
+
+.tablelite{width:100%;border-collapse:collapse;font-size:var(--t-sm)}
+.tablelite th{font-size:var(--t-xs);color:var(--muted);font-weight:400;text-align:right;padding:.3cqw .6cqw .5cqw;border-bottom:1px solid var(--line)}
+.tablelite td{padding:.6cqw;border-bottom:1px solid var(--line);vertical-align:middle}
+.tablelite td.n,.tablelite th.n{text-align:left;font-variant-numeric:tabular-nums}
+.tablelite tr.tot td{font-weight:600;border-bottom:0}
+
+.chips{display:flex;flex-wrap:wrap;gap:.45cqw}
+.chip{font-size:var(--t-xs);padding:.2cqw .7cqw;background:var(--surface);border:1px solid var(--line);line-height:1.6;direction:ltr;unicode-bidi:isolate}
+.chip.ar{direction:rtl}
+.chip.k{background:var(--lv-tint);border-color:transparent;color:var(--ink)}
+
+.lvl-p0{--lv:var(--m);--lv-ink:var(--m-ink)} .lvl-p1{--lv:var(--c);--lv-ink:var(--c-ink)} .lvl-p2{--lv:var(--y);--lv-ink:var(--y-ink)}
+.lvl-p0,.lvl-p1,.lvl-p2{--lv-tint:color-mix(in srgb,var(--lv) 13%,var(--surface))}
+
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0;counter-reset:s}
+.steps li{display:grid;grid-template-columns:3.2cqw minmax(0,1fr);gap:1cqw;padding-block:.8cqw;border-bottom:1px solid var(--line);align-items:start}
+.steps li:last-child{border-bottom:0}
+.steps .k{font-family:var(--font-display);font-weight:700;font-size:var(--t-lg);color:var(--lv-ink);direction:ltr;line-height:1.1}
+.steps .t{display:flex;flex-direction:column;gap:.15cqw;font-size:var(--t-sm);line-height:1.5}
+.steps .t b{font-weight:600}
+
+.calc{display:flex;flex-wrap:wrap;align-items:stretch;gap:.6cqw;direction:rtl}
+.calc .cell{background:var(--paper);padding:.8cqw 1.1cqw;display:flex;flex-direction:column;gap:.1cqw;min-width:0}
+.calc .cell b{font-family:var(--font-display);font-size:var(--t-h2);font-weight:700;font-variant-numeric:tabular-nums;direction:ltr;text-align:right}
+.calc .cell span{font-size:var(--t-xs);color:var(--muted)}
+.calc .op{align-self:center;font-size:var(--t-lg);color:var(--muted);font-weight:600}
+.calc .cell.res{background:var(--lv-tint)}
+
+.journey{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:0;row-gap:.6cqw}
+.journey .gate{grid-row:1;justify-self:end;display:flex;flex-direction:column;align-items:center;gap:.2cqw;transform:translateX(-50%);font-size:var(--t-xs);font-weight:600;direction:ltr}
+.journey .gate::after{content:"";width:.9cqw;height:.9cqw;background:var(--ink);transform:rotate(45deg)}
+.journey .band{grid-row:2;height:4.4cqw;display:flex;flex-direction:column;justify-content:center;padding-inline:1cqw;color:var(--ink);font-size:var(--t-xs);gap:.1cqw}
+.journey .band b{font-family:var(--font-display);font-size:var(--t-body);font-weight:700}
+.journey .band.p0{grid-column:1 / span 4;background:color-mix(in srgb,var(--m) 22%,var(--surface));box-shadow:inset 0 -3px 0 var(--m)}
+.journey .band.p1{grid-column:5 / span 4;background:color-mix(in srgb,var(--c) 22%,var(--surface));box-shadow:inset 0 -3px 0 var(--c)}
+.journey .band.p2{grid-column:9 / span 4;background:color-mix(in srgb,var(--y) 28%,var(--surface));box-shadow:inset 0 -3px 0 var(--y)}
+.journey .mo{grid-row:3;font-size:var(--t-xs);color:var(--muted);text-align:center;border-inline-start:1px solid var(--line);font-variant-numeric:tabular-nums}
+
+.check{display:inline-flex;align-items:center;gap:.5cqw;font-size:var(--t-xs);font-weight:600;padding:.1cqw .6cqw}
+.check.ok{background:color-mix(in srgb,var(--c) 16%,var(--surface));color:var(--c-ink)}
+.check.wait{background:color-mix(in srgb,var(--y) 22%,var(--surface));color:var(--y-ink)}
+
+.cover{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:3cqw;flex:1;align-items:center}
+.cover h1{font-family:var(--font-display);font-size:6.2cqw;font-weight:800;line-height:1;direction:ltr;text-align:right;letter-spacing:-.025em}
+.cover .ar-t{font-family:var(--font-display);font-size:var(--t-h1);font-weight:600;line-height:1.3;margin-top:1.2cqw}
+.cover .sub{font-size:var(--t-lg);color:var(--muted);margin-top:1cqw;max-width:40ch;line-height:1.6}
+.cover .brand{font-size:var(--t-sm);font-weight:600;letter-spacing:.14em;direction:ltr;text-align:right}
+.lvtiles{display:flex;flex-direction:column;gap:.8cqw}
+.lvtile{display:grid;grid-template-columns:7cqw minmax(0,1fr);align-items:center;gap:1.4cqw;padding:1.1cqw 1.3cqw;background:var(--paper);position:relative}
+.lvtile .c{font-family:var(--font-display);font-size:4cqw;font-weight:800;line-height:1;color:var(--lv);direction:ltr;text-align:center}
+.lvtile b{font-family:var(--font-display);font-size:var(--t-lg);font-weight:600;display:block}
+.lvtile span{font-size:var(--t-xs);color:var(--muted)}
+.regmark{position:absolute;left:var(--pad-x);top:var(--pad-t);width:4cqw;height:4cqw}
+
+/* ---------- controls ---------- */
+.controls{display:flex;align-items:center;gap:12px;padding-block:6px 12px;font-size:13px;color:var(--muted)}
+.controls button{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);height:34px;min-width:34px;padding:0 10px;display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer}
+.controls button:hover{border-color:var(--muted)}
+.controls button:focus-visible,.segs button:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+.controls svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
+.segs{flex:1;display:flex;gap:3px;align-items:flex-end;height:20px;min-width:0}
+.segs button{flex:1;height:8px;min-width:0;padding:0;border:0;background:var(--line);cursor:pointer}
+.segs button[data-l="p0"]{background:color-mix(in srgb,var(--m) 35%,var(--line))}
+.segs button[data-l="p1"]{background:color-mix(in srgb,var(--c) 35%,var(--line))}
+.segs button[data-l="p2"]{background:color-mix(in srgb,var(--y) 40%,var(--line))}
+.segs button.on{height:16px}
+.segs button.on[data-l="p0"]{background:var(--m)} .segs button.on[data-l="p1"]{background:var(--c)} .segs button.on[data-l="p2"]{background:var(--y)} .segs button.on[data-l="k"]{background:var(--ink)}
+#count{font-variant-numeric:tabular-nums;direction:ltr;min-width:52px;text-align:center}
+
+/* ---------- phone: stacked reading mode ---------- */
+@media (max-width: 820px){
+  html,body{height:auto}
+  .app{height:auto;display:block}
+  .viewport{display:block;container-type:normal;padding-block:16px}
+  .stage{width:auto;aspect-ratio:auto;container-type:normal;background:transparent;box-shadow:none;
+    --t-giant:60px;--t-hero:30px;--t-h1:23px;--t-h2:19px;--t-lg:17px;--t-body:15px;--t-sm:14px;--t-xs:12.5px;
+    --pad-x:18px;--pad-t:26px;--pad-b:52px;--gap:16px;--gap-s:10px}
+  .slide{position:relative;inset:auto;opacity:1;visibility:visible;background:var(--surface);margin-bottom:14px;overflow:visible;transition:none;box-shadow:0 0 0 1px var(--line)}
+  .s-foot{bottom:16px}
+  .marks{display:none}
+  .divider,.row2,.row2.wide-r,.row3,.cover{grid-template-columns:minmax(0,1fr)}
+  .weeks{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .olist{grid-template-columns:minmax(0,1fr)}
+  .scroll{overflow-x:auto}
+  .scroll > .ctable{min-width:640px}
+  .cover h1{font-size:44px}
+  .lvtile{grid-template-columns:56px minmax(0,1fr)}
+  .lvtile .c{font-size:34px}
+  .regmark{display:none}
+  .art svg{max-height:none}
+  .hb{grid-template-columns:minmax(0,110px) minmax(0,1fr) 40px}
+  .bar{height:8px} .sw{width:16px;height:8px} .tag::before{width:8px;height:8px} .olist li::before{width:6px;height:6px}
+  .wk .n{min-width:22px} .journey .band{height:auto;padding-block:8px}
+  .stackbar{height:26px}
+  .controls{display:none}
+  .steps li{grid-template-columns:36px minmax(0,1fr)}
+  .calc .cell{flex:1 1 40%}
+}
+/* System Builder additions: months map to the inks (M1 magenta, M2 cyan, M3 yellow, M4 key). */
+:root{--font-mono:"JetBrains Mono",ui-monospace,Consolas,"Courier New",monospace}
+.mono,svg .mono{font-family:var(--font-mono)}
+.slide[data-level="p3"]{--lv:var(--ink);--lv-ink:var(--ink)}
+.slide[data-level="p3"] .cmyk b:nth-child(4){opacity:1}
+.segs button[data-l="p3"]{background:color-mix(in srgb,var(--ink) 30%,var(--line))}
+.segs button.on[data-l="p3"]{background:var(--ink)}
+.lvl-p3{--lv:var(--ink);--lv-ink:var(--ink);--lv-tint:color-mix(in srgb,var(--ink) 8%,var(--surface))}
+.check.val{background:color-mix(in srgb,var(--m) 14%,var(--surface));color:var(--m-ink)}
+.olist .check{margin-inline-start:.6cqw}
+
+.wcols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1cqw;flex:1;min-height:0}
+.wcol{background:var(--paper);padding:1.1cqw 1.2cqw;display:flex;flex-direction:column;gap:.7cqw;position:relative;min-width:0}
+.wcol.gate{background:var(--lv-tint)}
+.wcol header{display:flex;flex-direction:column;gap:.25cqw}
+.wcol .wn{font-family:var(--font-display);font-size:var(--t-h1);font-weight:700;color:var(--lv-ink);line-height:1;font-variant-numeric:tabular-nums}
+.wcol .wt{font-weight:600;font-size:var(--t-sm);line-height:1.4}
+.wcol .wh{font-size:var(--t-xs);color:var(--muted);font-variant-numeric:tabular-nums}
+.days{list-style:none;margin:0;padding:.7cqw 0 0;display:flex;flex-direction:column;gap:.5cqw;border-top:1px solid var(--line)}
+.days li{display:grid;grid-template-columns:3.8cqw minmax(0,1fr);gap:.5cqw;font-size:var(--t-xs);line-height:1.4}
+.days li span:first-child{color:var(--muted)}
+.days li span:last-child{direction:ltr;text-align:right;unicode-bidi:isolate;font-family:var(--font-mono);font-size:.92em}
+.noai{margin-top:auto;font-size:var(--t-xs);line-height:1.5;border-top:1px dashed color-mix(in srgb,var(--muted) 60%,transparent);padding-top:.7cqw}
+.noai b{color:var(--lv-ink);font-weight:600;display:block}
+.gbadge{position:absolute;top:.8cqw;left:.8cqw;font-size:var(--t-xs);font-weight:600;background:var(--ink);color:var(--surface);padding:.05cqw .6cqw;direction:ltr}
+
+.dayline{display:flex;height:5cqw;gap:2px;margin-top:.6cqw}
+.dl{display:flex;flex-direction:column;justify-content:center;padding-inline:.7cqw;font-size:var(--t-xs);overflow:hidden;white-space:nowrap;min-width:0}
+.dl b{font-weight:600}
+.dl i{font-style:normal;font-family:var(--font-mono);opacity:.85}
+.dl.brk{background:transparent;color:var(--muted);box-shadow:inset 0 0 0 1px var(--line);align-items:center;padding:0}
+.dltimes{display:flex;gap:2px;font-size:var(--t-xs);color:var(--muted);font-family:var(--font-mono);direction:rtl}
+.dltimes span{min-width:0;overflow:visible;white-space:nowrap}
+
+.vchart{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:1.2cqw;height:28cqh;border-bottom:1px solid var(--line);margin-top:1cqw}
+.vc{position:relative;height:100%}
+.vb{position:absolute;inset-inline:0;bottom:0;height:var(--h);background:var(--lv-tint);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--lv) 45%,transparent)}
+.vb i{position:absolute;inset-inline:0;bottom:0;background:var(--lv)}
+.vv{position:absolute;inset-inline:0;bottom:calc(var(--h) + .4cqw);text-align:center;font-family:var(--font-display);font-weight:700;font-size:var(--t-body);font-variant-numeric:tabular-nums;direction:ltr}
+.vv small{font-family:var(--font-body);font-weight:400;font-size:.72em;color:var(--muted)}
+.vlabels{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:1.2cqw;font-size:var(--t-xs);color:var(--muted);text-align:center}
+
+.gate-row{display:grid;grid-template-columns:7cqw minmax(0,1fr);gap:1.6cqw;align-items:start}
+.gh{display:flex;flex-direction:column;gap:.1cqw}
+.gh b{font-family:var(--font-display);font-size:var(--t-h2);font-weight:700;color:var(--lv-ink);line-height:1;direction:ltr;text-align:right}
+.gh span{font-size:var(--t-xs);color:var(--muted)}
+.gbar{display:flex;height:1.9cqw;gap:2px}
+.gbar .na{background:repeating-linear-gradient(-45deg,var(--ink) 0 2px,transparent 2px 5px);box-shadow:inset 0 0 0 1px var(--ink)}
+.gl{display:flex;gap:2px;font-size:var(--t-xs);color:var(--ink)}
+.gl span{flex:1;min-width:0}
+.gate-row .gl span:nth-child(1){flex:var(--a,1)}
+.flow{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.5cqw;counter-reset:f}
+.flow li{counter-increment:f;background:var(--paper);padding:.6cqw .8cqw;font-size:var(--t-sm);display:flex;gap:.6cqw;align-items:baseline;line-height:1.35}
+.flow li::before{content:counter(f);font-family:var(--font-display);font-weight:700;color:var(--ink);font-size:var(--t-body)}
+.slide[data-title="Closing"] .lvtile{padding:.8cqw 1.2cqw}
+@media (max-width: 820px){
+  .wcols{grid-template-columns:minmax(0,1fr)}
+  .days li{grid-template-columns:52px minmax(0,1fr)}
+  .vchart{height:200px} .dayline{height:56px} .gbar{height:18px}
+  .gate-row{grid-template-columns:56px minmax(0,1fr)}
+  .gl{flex-wrap:wrap;gap:4px 10px} .gl span{flex:0 0 auto}
+  .flow{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .dl{padding-inline:4px} .dl i{display:none}
+}
+
+.slide[data-title="Closing"] .lvtile .c{font-size:2.6cqw}
+.wcol .wfoot{margin-top:auto;font-size:var(--t-xs);line-height:1.5;border-top:1px dashed color-mix(in srgb,var(--muted) 60%,transparent);padding-top:.7cqw}
+.wcol .wfoot b{color:var(--lv-ink);font-weight:600;display:block}
+.olist.xs{font-size:var(--t-xs)}
+.steps .k{font-size:var(--t-body)}
+
+/* English edition: left-to-right overrides */
+.lv-code,.cover h1,.cover .brand,.gh b{text-align:left}
+.bar i,.hb .track i{right:auto;left:0}
+.hrs,.hb .v,.tablelite td.n,.tablelite th.n{text-align:right}
+.tablelite th{text-align:left}
+.days li span:last-child{text-align:left}
+.gbadge{left:auto;right:.8cqw}
+.journey .gate{transform:translateX(50%)}
+.calc,.dltimes{direction:ltr}
+.calc .cell b{text-align:left}
+.days li{grid-template-columns:3cqw minmax(0,1fr)}
+.lvtile{grid-template-columns:7.5cqw minmax(0,1fr)}
+.regmark{left:auto;right:var(--pad-x)}
+.slide[data-title="P2 Advanced"] .d-title{font-size:4.2cqw}
+@media (max-width: 820px){.days li{grid-template-columns:40px minmax(0,1fr)}}
+</style>
+
+<div class="app" dir="ltr" lang="en">
+<main class="viewport">
+<div class="stage" id="stage">
+<!-- 1 COVER -->
+<section class="slide is-active" data-level="k" data-title="Cover">
+  <svg class="regmark" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="12" class="nf sk-i" stroke-width="1.2"/><circle cx="20" cy="20" r="6" class="nf sk-i" stroke-width="1.2"/><path d="M20 2v36M2 20h36" class="sk-i" stroke-width="1.2"/></svg>
+  <div class="cover">
+    <div class="stack lg">
+      <div class="brand">TAQAT ACADEMY 2027</div>
+      <h1>AI Solo System Builder</h1>
+      <p class="ar-t">Complete three-level training and instructor plan</p>
+      <p class="sub">An applied software engineering diploma for complete beginners. Each learner designs, builds, tests, secures, deploys and explains an enterprise-style system they own.</p>
+      <div class="meta" style="margin-top:1cqw">
+        <div><strong>12</strong><span>months</span></div>
+        <div><strong>1,260</strong><span>onsite hours</span></div>
+        <div><strong>3</strong><span>levels</span></div>
+        <div><strong>12</strong><span>assessment gates</span></div>
+      </div>
+    </div>
+    <div class="lvtiles">
+      <div class="lvtile lvl-p0"><span class="c">P0</span><div><b>Foundation · working MVP</b><span>420 h · two connected workflows</span></div></div>
+      <div class="lvtile lvl-p1"><span class="c">P1</span><div><b>Intermediate · integrated V1</b><span>420 h · backend, data, frontend, security</span></div></div>
+      <div class="lvtile lvl-p2"><span class="c">P2</span><div><b>Advanced · deployed, validated V2</b><span>420 h · DevOps, QA, reliability, automation</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 METHODOLOGY -->
+<section class="slide" data-level="k" data-title="Methodology">
+  <header class="s-head"><span class="tag">Introduction and methodology</span><h2>One system per learner, growing across three levels</h2><p>The diploma is a progression of engineering competence. P0 alone does not produce an employment-ready developer.</p></header>
+  <div class="s-body row3">
+    <div class="panel"><h3>AI-first, code-first</h3><p class="xs muted">Learners work with AI coding assistants from week one, while learning the concepts they need to evaluate, modify and debug what the AI generates.</p></div>
+    <div class="panel"><h3>Continuous engineering quality</h3><p class="xs muted">Version control, automated tests, security checks, documentation, peer review and deployment are introduced progressively from the start.</p></div>
+    <div class="panel"><h3>Individual ownership</h3><p class="xs muted">One curated reference-project library keeps complexity comparable, but every learner has a separate repository, data model, implementation and technical defense.</p></div>
+  </div>
+  <div class="stack">
+    <span class="xs muted">Daily teaching rhythm</span>
+    <div class="chips"><span class="chip k">Short concept demos</span><span class="chip k">Guided implementation</span><span class="chip k">Independent project work</span><span class="chip k">Tests</span><span class="chip k">Code review</span><span class="chip k">Daily evidence submission</span></div>
+    <span class="xs muted" style="margin-top:.6cqw">How real understanding is verified</span>
+    <div class="chips"><span class="chip">AI-free practical exams</span><span class="chip">Live defense at every gate</span><span class="chip">Synthetic or authorized data</span><span class="chip">No secrets or client data in AI tools</span><span class="chip">Team exercises never transfer project ownership</span></div>
+  </div>
+</section>
+
+<!-- 3 JOURNEY -->
+<section class="slide" data-level="k" data-title="Program at a glance">
+  <div class="divider" style="grid-template-columns:minmax(0,4fr) minmax(0,7fr)">
+    <div class="stack lg">
+      <span class="tag">Program at a glance</span>
+      <p class="d-title" style="font-size:3.8cqw">48 weeks, 12 gates, and three releases of the same system</p>
+      <div class="meta"><div><strong>420</strong><span>hours per level</span></div><div><strong>140</strong><span>theory / guided</span></div><div><strong>280</strong><span>practical</span></div></div>
+    </div>
+    <figure class="art">
+      <figcaption><span><b>The learner journey</b> over 12 months</span><span>A gate at the end of every month</span></figcaption>
+      <div class="journey" style="padding-block:1cqw .4cqw">
+        <span class="gate" style="grid-column:1">G1</span><span class="gate" style="grid-column:2">G2</span><span class="gate" style="grid-column:3">G3</span><span class="gate" style="grid-column:4">G4</span>
+        <span class="gate" style="grid-column:5">G1</span><span class="gate" style="grid-column:6">G2</span><span class="gate" style="grid-column:7">G3</span><span class="gate" style="grid-column:8">G4</span>
+        <span class="gate" style="grid-column:9">G1</span><span class="gate" style="grid-column:10">G2</span><span class="gate" style="grid-column:11">G3</span><span class="gate" style="grid-column:12">G4</span>
+        <div class="band p0"><b>P0 Foundation</b><span>MVP: two connected workflows</span></div>
+        <div class="band p1"><b>P1 Intermediate</b><span>Integrated V1</span></div>
+        <div class="band p2"><b>P2 Advanced</b><span>Deployed, validated V2</span></div>
+        <span class="mo">1</span><span class="mo">2</span><span class="mo">3</span><span class="mo">4</span><span class="mo">5</span><span class="mo">6</span><span class="mo">7</span><span class="mo">8</span><span class="mo">9</span><span class="mo">10</span><span class="mo">11</span><span class="mo">12</span>
+      </div>
+      <div class="row3" style="gap:.8cqw;margin-top:.6cqw">
+        <div class="panel lvl-p0" style="background:var(--surface)"><span class="xs muted">Emphasis</span><b class="small">Programming foundations, lean specs, full-stack basics, first tests</b></div>
+        <div class="panel lvl-p1" style="background:var(--surface)"><span class="xs muted">Emphasis</span><b class="small">Advanced backend, database, frontend, security, integration</b></div>
+        <div class="panel lvl-p2" style="background:var(--surface)"><span class="xs muted">Emphasis</span><b class="small">DevOps, QA, security, migration, scalability, automation</b></div>
+      </div>
+    </figure>
+  </div>
+</section>
+
+<!-- 4 EVOLUTION -->
+<section class="slide" data-level="k" data-title="System evolution">
+  <div class="divider" style="grid-template-columns:minmax(0,5fr) minmax(0,6fr)">
+    <div class="stack lg">
+      <span class="tag">Acceptance definition per release</span>
+      <p class="d-title" style="font-size:3.6cqw">Each release keeps everything before it and builds on it</p>
+      <ol class="steps">
+        <li class="lvl-p0"><span class="k">MVP</span><span class="t"><b>End of P0</b><span class="muted xs">At least two real connected operations, UI → API → persistent database, deployed for demonstration.</span></span></li>
+        <li class="lvl-p1"><span class="k">V1</span><span class="t"><b>End of P1</b><span class="muted xs">Keeps the MVP flows and adds two substantial linked workflows, better roles, data integrity, core tests and a deployed demo environment.</span></span></li>
+        <li class="lvl-p2"><span class="k">V2</span><span class="t"><b>End of P2</b><span class="muted xs">Reliable deployment, automated tests, recoverable migrations, observability, documented performance and incident response, and one bounded automation.</span></span></li>
+      </ol>
+      <p class="note">V1 and V2 are educational releases. Neither is a claim of unrestricted production readiness.</p>
+    </div>
+    <figure class="art">
+      <svg viewBox="0 0 600 420" role="img" aria-label="Three releases of the same system growing: MVP, then V1, then V2">
+  <rect x="20" y="380" width="560" height="1.5" class="fl"/>
+  <g transform="translate(-390 0)">
+    <rect x="410" y="200" width="170" height="170" rx="8" class="fs" stroke="var(--m)" stroke-width="2"/>
+    <rect x="410" y="200" width="170" height="20" rx="8" class="tm"/><rect x="410" y="212" width="170" height="8" class="tm"/>
+    <rect x="426" y="236" width="138" height="54" rx="6" class="fp"/><rect x="470" y="252" width="80" height="7" rx="3.5" class="fl"/><rect x="500" y="268" width="50" height="12" rx="6" class="fm"/>
+    <rect x="426" y="300" width="138" height="54" rx="6" class="fp"/><rect x="470" y="316" width="80" height="7" rx="3.5" class="fl"/><rect x="500" y="332" width="50" height="12" rx="6" class="fm"/>
+    <text x="495" y="404" text-anchor="middle" font-size="13" class="fm disp">P0 · MVP</text>
+  </g>
+  <g transform="translate(18 0)">
+    <rect x="196" y="130" width="186" height="240" rx="8" class="fs" stroke="var(--c)" stroke-width="2"/>
+    <rect x="196" y="130" width="186" height="22" rx="8" class="tc"/><rect x="196" y="144" width="186" height="8" class="tc"/>
+    <rect x="336" y="152" width="46" height="218" class="fc" opacity=".85"/>
+    <rect x="344" y="166" width="30" height="6" rx="3" class="fs"/><rect x="344" y="182" width="30" height="6" rx="3" class="fs" opacity=".6"/><rect x="344" y="198" width="30" height="6" rx="3" class="fs" opacity=".6"/><rect x="344" y="214" width="30" height="6" rx="3" class="fs" opacity=".6"/>
+    <rect x="208" y="166" width="118" height="40" rx="5" class="fp"/><rect x="208" y="212" width="56" height="40" rx="5" class="fp"/><rect x="270" y="212" width="56" height="40" rx="5" class="fp"/>
+    <rect x="208" y="258" width="118" height="48" rx="5" class="fp"/>
+    <circle cx="224" cy="282" r="6" class="fc"/><circle cx="244" cy="282" r="6" class="tc"/><circle cx="264" cy="282" r="6" class="fc" opacity=".5"/>
+    <rect x="208" y="314" width="118" height="44" rx="5" class="fp"/><path d="M216 348 L238 334 L258 340 L280 324 L318 320" class="nf" stroke="var(--c)" stroke-width="2"/>
+    <text x="289" y="404" text-anchor="middle" font-size="13" class="fc disp">P1 · V1</text>
+  </g>
+  <g transform="translate(414 0)">
+    <rect x="20" y="40" width="146" height="330" rx="8" class="fs" stroke="var(--y)" stroke-width="2"/>
+    <rect x="20" y="40" width="146" height="22" rx="8" class="ty"/><rect x="20" y="54" width="146" height="8" class="ty"/>
+    <rect x="32" y="74" width="122" height="34" rx="5" class="fp"/>
+    <circle cx="46" cy="91" r="5" class="fc"/><circle cx="64" cy="91" r="5" class="fc"/><circle cx="82" cy="91" r="5" class="fc"/><rect x="98" y="87" width="46" height="8" rx="4" class="fl"/>
+    <rect x="32" y="116" width="122" height="70" rx="5" class="fp"/><path d="M40 170 L60 160 L80 166 L100 148 L120 152 L146 136" class="nf" stroke="var(--y)" stroke-width="2.5"/>
+    <path d="M40 140 H146" stroke="var(--m)" stroke-width="1" stroke-dasharray="3 3"/>
+    <rect x="32" y="194" width="122" height="56" rx="5" class="fp"/>
+    <rect x="40" y="204" width="20" height="14" rx="3" class="fy"/><rect x="66" y="204" width="20" height="14" rx="3" class="fy"/><rect x="92" y="204" width="20" height="14" rx="3" class="fy"/><rect x="118" y="204" width="20" height="14" rx="3" class="fi"/>
+    <rect x="40" y="228" width="98" height="6" rx="3" class="fl"/>
+    <rect x="32" y="258" width="122" height="44" rx="5" class="fi"/><rect x="42" y="270" width="70" height="6" rx="3" class="fp" opacity=".7"/><rect x="42" y="284" width="50" height="6" rx="3" class="fp" opacity=".4"/>
+    <rect x="32" y="310" width="122" height="48" rx="5" class="fp"/><rect x="40" y="322" width="64" height="8" rx="4" class="fl"/><rect x="40" y="338" width="44" height="12" rx="6" class="fy"/>
+    <text x="93" y="404" text-anchor="middle" font-size="13" class="fi disp">P2 · V2</text>
+  </g>
+<path d="M194 290 H210" stroke="var(--muted)" stroke-width="2"/><path d="M204 284 L212 290 L204 296" class="nf" stroke="var(--muted)" stroke-width="2"/><path d="M404 250 H428" stroke="var(--muted)" stroke-width="2"/><path d="M422 244 L430 250 L422 256" class="nf" stroke="var(--muted)" stroke-width="2"/></svg>
+      <figcaption><span>Expected outcome: <b>one system growing from MVP to V2</b></span><span>Illustrative example</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 5 CONTROLS -->
+<section class="slide" data-level="k" data-title="Controls and approval status">
+  <header class="s-head"><span class="tag">Program-wide controls</span><h2>What is approved in P0, and what is proposed for P1 and P2</h2></header>
+  <div class="s-body">
+    <table class="tablelite">
+      <thead><tr><th style="width:20%">Item</th><th>Specification</th><th style="width:11%">P0</th><th style="width:17%">P1 and P2</th></tr></thead>
+      <tbody>
+        <tr><td>Duration and hours</td><td class="small">16 weeks and 420 onsite hours per level: 140 theory/guided + 280 practical</td><td><span class="check ok">Approved</span></td><td><span class="check ok">Established</span> <span class="check wait">Split proposed</span></td></tr>
+        <tr><td>Daily timetable</td><td class="small">08:30–15:45, Sunday to Wednesday; until 16:00 in gate weeks 4, 8, 12 and 16</td><td><span class="check ok">Approved</span></td><td><span class="check wait">Proposed</span></td></tr>
+        <tr><td>Gate standard</td><td class="small">≥80% overall, every mandatory deliverable, separate no-AI pass, two reassessments within two weeks</td><td><span class="check ok">Approved</span></td><td><span class="check wait">Proposed</span></td></tr>
+        <tr><td>Gate weights, no-AI minimum</td><td class="small">Weights per level; proposed 70% minimum on the independent test</td><td><span class="check wait">Proposed</span></td><td><span class="check wait">Proposed</span></td></tr>
+        <tr><td>Technology stack</td><td class="small">TypeScript · Node.js · React · PostgreSQL · Git/GitHub · Docker · GitHub Actions</td><td><span class="check wait">Recommended</span></td><td><span class="check wait">Recommended</span></td></tr>
+        <tr><td>V1 and V2 scope</td><td class="small">Calibrated by the complexity of each reference project</td><td>—</td><td><span class="check wait">Proposed</span></td></tr>
+        <tr><td>Staffing and platform costs</td><td class="small">One lead instructor and one technical assistant per 25 learners, with specialist reviewers at gates</td><td><span class="check wait">Proposed</span></td><td><span class="check wait">Subject to budget</span></td></tr>
+        <tr><td>Employer review</td><td class="small">Validate project briefs and skills with target employers before cohort launch</td><td colspan="2"><span class="check val">To validate</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 6 CALENDAR -->
+<section class="slide" data-level="k" data-title="Calendar and hours">
+  <header class="s-head"><span class="tag">Calendar and hour control</span><h2>Four onsite days a week, and 420 hours in every level</h2><p>12 weeks × 26 h + 4 gate weeks × 27 h = 420. No homework counts toward contact hours.</p></header>
+  <div class="s-body row2" style="grid-template-columns:minmax(0,1fr) minmax(0,1.1fr)">
+    <div class="stack lg">
+      <h3>The training day</h3>
+      <div class="dayline">
+        <span class="dl" style="flex:105;background:var(--c);color:var(--surface)"><b>Learning</b><i>1:45</i></span>
+        <span class="dl brk" style="flex:15"></span>
+        <span class="dl" style="flex:120;background:color-mix(in srgb,var(--m) 70%,var(--surface));color:var(--ink)"><b>Practice</b><i>2:00</i></span>
+        <span class="dl brk" style="flex:30"><b>Break</b></span>
+        <span class="dl" style="flex:165;background:var(--m);color:var(--surface)"><b>Practice and review</b><i>2:45</i></span>
+        <span class="dl" style="flex:15;background:repeating-linear-gradient(-45deg,var(--ink) 0 2px,transparent 2px 5px);box-shadow:inset 0 0 0 1px var(--ink)"></span>
+      </div>
+      <div class="dltimes"><span style="flex:105">08:30</span><span style="flex:15">10:15</span><span style="flex:120">10:30</span><span style="flex:30">12:30</span><span style="flex:165">13:00</span><span style="flex:15">15:45</span></div>
+      <p class="note">The hatched block is 15 extra minutes until 16:00 in gate weeks only. The two breaks (45 minutes) are excluded.</p>
+      <div class="calc">
+        <div class="cell"><b>420</b><span>per level</span></div><span class="op">×</span>
+        <div class="cell"><b>3</b><span>levels</span></div><span class="op">=</span>
+        <div class="cell res"><b>1,260</b><span>onsite hours</span></div>
+      </div>
+    </div>
+    <table class="tablelite">
+      <thead><tr><th>Level</th><th class="n">Month 1</th><th class="n">Month 2</th><th class="n">Month 3</th><th class="n">Month 4</th><th class="n">Total</th></tr></thead>
+      <tbody>
+        <tr class="lvl-p0"><td><span class="code">P0</span></td><td class="n">42 / 63</td><td class="n">36 / 69</td><td class="n">34 / 71</td><td class="n">28 / 77</td><td class="n"><b>140 / 280</b></td></tr>
+        <tr class="lvl-p1"><td><span class="code">P1</span></td><td class="n">35 / 70</td><td class="n">35 / 70</td><td class="n">35 / 70</td><td class="n">35 / 70</td><td class="n"><b>140 / 280</b></td></tr>
+        <tr class="lvl-p2"><td><span class="code">P2</span></td><td class="n">35 / 70</td><td class="n">35 / 70</td><td class="n">35 / 70</td><td class="n">35 / 70</td><td class="n"><b>140 / 280</b></td></tr>
+        <tr class="tot"><td>Each month</td><td class="n">105</td><td class="n">105</td><td class="n">105</td><td class="n">105</td><td class="n">420</td></tr>
+      </tbody>
+      <caption class="note" style="caption-side:bottom;text-align:left;padding-top:.8cqw">Theory-guided / practical. In P0 theory falls month by month; in P1 and P2 the split is fixed: 9 + 17 in a regular week and 8 + 19 in a gate week.</caption>
+    </table>
+  </div>
+</section>
+
+<!-- 7 P0 DIVIDER -->
+<section class="slide" data-level="p0" data-title="P0 Foundation">
+  <div class="divider">
+    <div class="stack lg">
+      <div class="lv-code">P0</div>
+      <p class="d-title">Foundation: from zero to a working MVP</p>
+      <p class="d-en">Revised plan · Months 1–4</p>
+      <div class="meta"><div><strong>420</strong><span>hours</span></div><div><strong>140</strong><span>theory</span></div><div><strong>280</strong><span>practical</span></div><div><strong>4</strong><span>gates</span></div></div>
+      <ul class="olist">
+        <li>TypeScript without AI</li><li>Git, PRs and code review</li><li>Responsive React UIs</li><li>PostgreSQL schema and CRUD</li><li>Node API with role checks</li><li>Tests throughout development</li><li>Spotting unsafe AI code</li><li>MVP deployed for demo</li>
+      </ul>
+    </div>
+    <figure class="art">
+      <svg viewBox="0 0 600 420" role="img" aria-label="Deployed MVP: two connected operations, a release tag, a test report and acceptance tests">
+        <rect x="20" y="20" width="560" height="290" rx="8" class="fs st"/>
+        <rect x="460" y="20" width="120" height="290" class="fi"/><path d="M460 20 H572 Q580 20 580 28 V302 Q580 310 572 310 H460Z" class="fi"/>
+        <circle cx="520" cy="56" r="14" class="fp" opacity=".85"/>
+        <rect x="480" y="92" width="80" height="8" rx="4" class="fp" opacity=".85"/><rect x="490" y="114" width="70" height="8" rx="4" class="fp" opacity=".45"/><rect x="484" y="136" width="76" height="8" rx="4" class="fp" opacity=".45"/>
+        <text x="300" y="56" text-anchor="middle" font-size="15" class="fi disp" direction="ltr">Maintenance requests</text>
+        <rect x="270" y="74" width="170" height="92" rx="8" class="fp"/>
+        <text x="355" y="100" text-anchor="middle" font-size="12" class="fi" direction="ltr">Operation 1: Create request</text>
+        <rect x="290" y="114" width="130" height="8" rx="4" class="fl"/><rect x="330" y="134" width="90" height="20" rx="10" class="fi"/>
+        <path d="M264 120 H226" stroke="var(--ink)" stroke-width="2"/><path d="M232 114 L224 120 L232 126" class="nf" stroke="var(--ink)" stroke-width="2"/>
+        <rect x="40" y="74" width="180" height="92" rx="8" class="fp"/>
+        <text x="130" y="100" text-anchor="middle" font-size="12" class="fi" direction="ltr">Operation 2: Approve request</text>
+        <rect x="60" y="114" width="140" height="8" rx="4" class="fl"/><rect x="60" y="134" width="60" height="20" rx="10" class="fc"/><rect x="126" y="134" width="60" height="20" rx="10" class="tm"/>
+        <g>
+          <rect x="40" y="184" width="400" height="1" class="fl"/>
+          <rect x="300" y="198" width="130" height="8" rx="4" class="fl"/><rect x="50" y="194" width="60" height="16" rx="8" class="tc"/>
+          <rect x="40" y="220" width="400" height="1" class="fl"/>
+          <rect x="320" y="234" width="110" height="8" rx="4" class="fl"/><rect x="50" y="230" width="60" height="16" rx="8" class="ty"/>
+          <rect x="40" y="256" width="400" height="1" class="fl"/>
+          <rect x="290" y="270" width="140" height="8" rx="4" class="fl"/><rect x="50" y="266" width="60" height="16" rx="8" class="tc"/>
+        </g>
+        <rect x="410" y="326" width="170" height="76" rx="8" class="fi"/>
+        <path d="M430 352 l12 -12 h18 v18 l-12 12z" class="fy"/><circle cx="452" cy="346" r="3" class="fi"/>
+        <text x="520" y="358" text-anchor="middle" font-size="16" class="fs mono">v0.1.0</text><text x="520" y="382" text-anchor="middle" font-size="11" class="fp mono" opacity=".7">release tag</text>
+        <rect x="215" y="326" width="180" height="76" rx="8" class="fs st"/>
+        <text x="305" y="350" text-anchor="middle" font-size="11" class="fmu mono">unit · API · UAT</text>
+        <rect x="235" y="362" width="140" height="10" rx="5" class="fl"/><rect x="235" y="362" width="140" height="10" rx="5" class="fc"/>
+        <text x="305" y="392" text-anchor="middle" font-size="12" class="fi mono">52 passed</text>
+        <rect x="20" y="326" width="180" height="76" rx="8" class="fs st"/>
+        <text x="110" y="352" text-anchor="middle" font-size="11" class="fmu" direction="ltr">Acceptance tests</text>
+        <circle cx="70" cy="378" r="10" class="fc"/><path d="M65 378 l4 4 l7 -8" class="nf" stroke="var(--surface)" stroke-width="2"/>
+        <circle cx="96" cy="378" r="10" class="fc"/><path d="M91 378 l4 4 l7 -8" class="nf" stroke="var(--surface)" stroke-width="2"/>
+        <text x="148" y="383" text-anchor="middle" font-size="12" class="fi mono">2 / 2</text>
+      </svg>
+      <figcaption><span>Expected outcome: <b>MVP with two connected operations, deployed for demo</b></span><span>Illustrative; figures are hypothetical</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 8 P0 MAP -->
+<section class="slide" data-level="p0" data-title="P0 curriculum map">
+  <header class="s-head"><span class="tag">P0 curriculum map</span><h2>Four months, with a gate at the end of each</h2><p>A small vertical slice is built early, in week 4, then evolved instead of leaving integration to the final month.</p></header>
+  <div class="s-body">
+    <div class="scroll"><div class="ctable" style="grid-template-columns:auto minmax(0,1.3fr) auto auto minmax(0,1fr) minmax(0,2fr) auto;font-size:var(--t-body)">
+      <div class="hd"><span>Month</span><span>Focus</span><span class="hrs">Theory</span><span class="hrs">Practical</span><span>Theory / practical</span><span>Core outcome</span><span>Gate</span></div>
+      <div><span class="code">M1</span><span class="cname"><span>Code-first foundations</span><span class="ar">Weeks 1–4</span></span><span class="hrs">42</span><span class="hrs">63</span><span class="bar"><i style="--w:100%;--t:40%"><b class="th"></b><b class="pr"></b></i></span><span class="out">TypeScript, HTML/CSS, Git/CLI, lean product brief, first local CRUD vertical slice</span><span class="code">G1</span></div>
+      <div><span class="code">M2</span><span class="cname"><span>Full-stack essentials</span><span class="ar">Weeks 5–8</span></span><span class="hrs">36</span><span class="hrs">69</span><span class="bar"><i style="--w:100%;--t:34%"><b class="th"></b><b class="pr"></b></i></span><span class="out">React, API integration, SQL and data modelling, tests, auth and roles basics</span><span class="code">G2</span></div>
+      <div><span class="code">M3</span><span class="cname"><span>System engineering</span><span class="ar">Weeks 9–12</span></span><span class="hrs">34</span><span class="hrs">71</span><span class="bar"><i style="--w:100%;--t:32%"><b class="th"></b><b class="pr"></b></i></span><span class="out">Service layers, integration, security, Docker, CI, peer PRs, full workflow</span><span class="code">G3</span></div>
+      <div><span class="code">M4</span><span class="cname"><span>MVP completion and release</span><span class="ar">Weeks 13–16</span></span><span class="hrs">28</span><span class="hrs">77</span><span class="bar"><i style="--w:100%;--t:27%"><b class="th"></b><b class="pr"></b></i></span><span class="out">Two connected operations, QA, deployment, LLM API microtask, demo and defense</span><span class="code">G4</span></div>
+      <div class="tot"><span></span><span>Total · weeks 1–16</span><span class="hrs">140</span><span class="hrs">280</span><span class="small">420 hours</span><span></span><span></span></div>
+    </div></div>
+    <div class="legend"><span><i class="sw th"></i>Theory / guided</span><span><i class="sw"></i>Practical</span></div>
+  </div>
+</section>
+
+<!-- 9 CODING EXPOSURE -->
+<section class="slide" data-level="p0" data-title="P0 coding exposure">
+  <header class="s-head"><span class="tag">P0 coding exposure commitment</span><h2>98 hours of hands-on coding reserved in the first eight weeks</h2><p>At least 84 of the first 210 onsite hours (40%) must be logged as hands-on programming: writing, modifying, running, testing or debugging code.</p></header>
+  <div class="s-body row2" style="grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)">
+    <div class="stack">
+      <div class="legend"><span><i class="sw"></i>Reserved coding</span><span><i class="sw" style="background:var(--lv-tint);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--lv) 45%,transparent)"></i>Total practical hours</span></div>
+      <div class="vchart">
+        <div class="vc" style="--h:70%"><span class="vv">12<small> / 14</small></span><div class="vb"><i style="height:85.7%"></i></div></div>
+        <div class="vc" style="--h:80%"><span class="vv">12<small> / 16</small></span><div class="vb"><i style="height:75%"></i></div></div>
+        <div class="vc" style="--h:80%"><span class="vv">12<small> / 16</small></span><div class="vb"><i style="height:75%"></i></div></div>
+        <div class="vc" style="--h:85%"><span class="vv">13<small> / 17</small></span><div class="vb"><i style="height:76.5%"></i></div></div>
+        <div class="vc" style="--h:80%"><span class="vv">12<small> / 16</small></span><div class="vb"><i style="height:75%"></i></div></div>
+        <div class="vc" style="--h:90%"><span class="vv">13<small> / 18</small></span><div class="vb"><i style="height:72.2%"></i></div></div>
+        <div class="vc" style="--h:80%"><span class="vv">12<small> / 16</small></span><div class="vb"><i style="height:75%"></i></div></div>
+        <div class="vc" style="--h:95%"><span class="vv">12<small> / 19</small></span><div class="vb"><i style="height:63.2%"></i></div></div>
+      </div>
+      <div class="vlabels"><span>W1</span><span>W2</span><span>W3</span><span>W4 · G1</span><span>W5</span><span>W6</span><span>W7</span><span>W8 · G2</span></div>
+    </div>
+    <div class="stack lg">
+      <div class="calc"><div class="cell"><b>84</b><span>Required minimum</span></div><div class="cell res"><b>98</b><span>Reserved in schedule</span></div><div class="cell"><b>40%</b><span>of 210 hours</span></div></div>
+      <div class="panel"><h3>What does not count</h3><p class="xs muted">Documentation, diagramming and AI prompting without executable code.</p></div>
+      <div class="panel"><h3>Daily control</h3><p class="xs muted">The instructor logs actual coded hours daily. A shortfall triggers same-week rebalancing without changing the 420-hour total.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-level="p0" data-title="P0 month 1"><header class="s-head"><span class="tag">P0 · Month 1 · Code-first foundations · Weeks 1–4</span><h2>From the first line of TypeScript to the first working slice</h2></header><div class="wcols"><div class="wcol"><header><span class="wn">1</span><span class="wt">TypeScript, CLI and AI verification</span><span class="wh">12 + 14 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>Working TS starter + CLI checklist</span></li><li><span>Mon</span><span>Condition-based mini-app</span></li><li><span>Tue</span><span>Functions and data structures commits</span></li><li><span>Wed</span><span>Project brief v0 + repo + AI Work Log</span></li></ul><p class="wfoot"><b>Without AI</b>Explain and modify a TypeScript function</p></div><div class="wcol"><header><span class="wn">2</span><span class="wt">Programming loops, Git and problem discovery</span><span class="wh">10 + 16 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>Search/filter code + debug notes</span></li><li><span>Mon</span><span>Reviewed PR + merge evidence</span></li><li><span>Tue</span><span>Problem statement + working CLI feature</span></li><li><span>Wed</span><span>HTML form + lightweight user stories</span></li></ul><p class="wfoot"><b>Without AI</b>Trace a loop and fix a branch conflict</p></div><div class="wcol"><header><span class="wn">3</span><span class="wt">Frontend basics and test-first habits</span><span class="wh">10 + 16 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>Responsive HTML/CSS screens</span></li><li><span>Mon</span><span>Interactive browser prototype</span></li><li><span>Tue</span><span>First automated unit tests</span></li><li><span>Wed</span><span>Lean Product Spec v1 + acceptance tests</span></li></ul><p class="wfoot"><b>Without AI</b>Implement a form validation rule and one test</p></div><div class="wcol gate"><span class="gbadge">G1</span><header><span class="wn">4</span><span class="wt">Early vertical slice and G1</span><span class="wh">10 + 17 = 27 h</span></header><ul class="days"><li><span>Sun</span><span>API starter (GET/POST)</span></li><li><span>Mon</span><span>First UI → API flow</span></li><li><span>Tue</span><span>Working vertical slice v0</span></li><li><span>Wed</span><span>G1 pack + two-operation MVP scope</span></li></ul><p class="wfoot"><b>Without AI</b>Modify an endpoint and explain request/response</p></div></div></section>
+<section class="slide" data-level="p0" data-title="P0 month 2"><header class="s-head"><span class="tag">P0 · Month 2 · Full-stack essentials · Weeks 5–8</span><h2>A React UI, real data and tested roles</h2></header><div class="wcols"><div class="wcol"><header><span class="wn">5</span><span class="wt">React foundations and practical components</span><span class="wh">10 + 16 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>React starter + components</span></li><li><span>Mon</span><span>React form (state, events)</span></li><li><span>Tue</span><span>React/API integration</span></li><li><span>Wed</span><span>Component test + peer feedback</span></li></ul><p class="wfoot"><b>Without AI</b>Fix a React state update bug</p></div><div class="wcol"><header><span class="wn">6</span><span class="wt">SQL, relational modelling and data access</span><span class="wh">8 + 18 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>Schema v1 + seed data</span></li><li><span>Mon</span><span>SQL script + query tests</span></li><li><span>Tue</span><span>ERD-lite + constraints</span></li><li><span>Wed</span><span>Persisted UI → API → DB flow</span></li></ul><p class="wfoot"><b>Without AI</b>Write a JOIN and explain a foreign-key failure</p></div><div class="wcol"><header><span class="wn">7</span><span class="wt">API engineering and quality</span><span class="wh">10 + 16 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>Validated endpoint</span></li><li><span>Mon</span><span>Service layer + PR</span></li><li><span>Tue</span><span>Automated API tests</span></li><li><span>Wed</span><span>Auth prototype + threat notes</span></li></ul><p class="wfoot"><b>Without AI</b>Debug a failing API test</p></div><div class="wcol gate"><span class="gbadge">G2</span><header><span class="wn">8</span><span class="wt">Integrated design and G2</span><span class="wh">8 + 19 = 27 h</span></header><ul class="days"><li><span>Sun</span><span>Role-check tests</span></li><li><span>Mon</span><span>Accessible workflow v1</span></li><li><span>Tue</span><span>Lean Design Pack</span></li><li><span>Wed</span><span>G2 pack + remediation if needed</span></li></ul><p class="wfoot"><b>Without AI</b>Correct a missing role check and justify the fix</p></div></div></section>
+<section class="slide" data-level="p0" data-title="P0 month 3"><header class="s-head"><span class="tag">P0 · Month 3 · System engineering · Weeks 9–12</span><h2>Clear architecture, security and a repeatable runtime</h2></header><div class="wcols"><div class="wcol"><header><span class="wn">9</span><span class="wt">System architecture and API contracts</span><span class="wh">10 + 16 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>Architecture v1</span></li><li><span>Mon</span><span>API contract + examples</span></li><li><span>Tue</span><span>Logging and debug evidence</span></li><li><span>Wed</span><span>Peer review + revised contract</span></li></ul><p class="wfoot"><b>Without AI</b>Explain a request path across UI, controller, service and DB</p></div><div class="wcol"><header><span class="wn">10</span><span class="wt">Backend resilience and secure AI coding</span><span class="wh">8 + 18 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>Negative-path tests</span></li><li><span>Mon</span><span>Permission matrix + tests</span></li><li><span>Tue</span><span>AI risk review + package provenance</span></li><li><span>Wed</span><span>Refactored backend + CI-ready tests</span></li></ul><p class="wfoot"><b>Without AI</b>Find and fix insecure input handling</p></div><div class="wcol"><header><span class="wn">11</span><span class="wt">Docker, CI and deployment foundations</span><span class="wh">8 + 18 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>Env template + secret scan</span></li><li><span>Mon</span><span>Dockerfile + local run</span></li><li><span>Tue</span><span>Passing CI run</span></li><li><span>Wed</span><span>Staging URL or verified local alternative</span></li></ul><p class="wfoot"><b>Without AI</b>Explain a failing CI step and fix it</p></div><div class="wcol gate"><span class="gbadge">G3</span><header><span class="wn">12</span><span class="wt">Connected workflow and G3</span><span class="wh">8 + 19 = 27 h</span></header><ul class="days"><li><span>Sun</span><span>Connected backend flow</span></li><li><span>Mon</span><span>Integration suite</span></li><li><span>Tue</span><span>Team sprint record + individual PR</span></li><li><span>Wed</span><span>G3 pack + technical defense</span></li></ul><p class="wfoot"><b>Without AI</b>Trace and repair a controller → service → DB failure</p></div></div></section>
+<section class="slide" data-level="p0" data-title="P0 month 4"><header class="s-head"><span class="tag">P0 · Month 4 · MVP completion and release · Weeks 13–16</span><h2>Two connected operations, then quality, then defense</h2></header><div class="wcols"><div class="wcol"><header><span class="wn">13</span><span class="wt">MVP operation 1 and interface polish</span><span class="wh">8 + 18 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>MVP sprint plan</span></li><li><span>Mon</span><span>Operation 1 UI/API/DB</span></li><li><span>Tue</span><span>Operation 1 UX + tests</span></li><li><span>Wed</span><span>Reviewed release candidate</span></li></ul><p class="wfoot"><b>Without AI</b>Change one business rule and update its test</p></div><div class="wcol"><header><span class="wn">14</span><span class="wt">MVP operation 2 and role enforcement</span><span class="wh">8 + 18 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>Operation 2 backend</span></li><li><span>Mon</span><span>Operation 2 UI/API/DB</span></li><li><span>Tue</span><span>Authorization/data tests</span></li><li><span>Wed</span><span>Integrated MVP beta</span></li></ul><p class="wfoot"><b>Without AI</b>Repair a frontend/API mismatch</p></div><div class="wcol"><header><span class="wn">15</span><span class="wt">Quality, LLM microtask and release</span><span class="wh">6 + 20 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>Test report</span></li><li><span>Mon</span><span>Security/quality checklist</span></li><li><span>Tue</span><span>LLM microtask or documented simulation</span></li><li><span>Wed</span><span>Release candidate + deploy evidence</span></li></ul><p class="wfoot"><b>Without AI</b>Fix a regression and explain AI-generated risk</p></div><div class="wcol gate"><span class="gbadge">G4</span><header><span class="wn">16</span><span class="wt">G4 final MVP and individual defense</span><span class="wh">6 + 21 = 27 h</span></header><ul class="days"><li><span>Sun</span><span>UAT evidence</span></li><li><span>Mon</span><span>Release tag + deployment notes</span></li><li><span>Tue</span><span>Portfolio case study + demo</span></li><li><span>Wed</span><span>G4 scorecard + final acceptance</span></li></ul><p class="wfoot"><b>Without AI</b>Independently modify and debug a live feature</p></div></div></section>
+
+<!-- P0 GATES -->
+<section class="slide" data-level="p0" data-title="P0 gates">
+  <header class="s-head"><span class="tag">P0 gates</span><h2>What each P0 gate measures; the no-AI defense is always 20%</h2><p>Weights are proposed and need director sign-off before enrollment. Every gate includes an independent no-AI exercise in its mandatory evidence.</p></header>
+  <div class="s-body" style="gap:1.2cqw">
+    <div class="gate-row"><div class="gh"><b>G1</b><span>Week 4</span></div><div class="stack"><div class="gbar"><span style="flex:30;background:var(--lv)"></span><span style="flex:25;background:color-mix(in srgb,var(--lv) 65%,var(--surface))"></span><span style="flex:15;background:color-mix(in srgb,var(--lv) 40%,var(--surface))"></span><span style="flex:10;background:color-mix(in srgb,var(--lv) 20%,var(--surface))"></span><span class="na" style="flex:20"></span></div><div class="gl"><span style="flex:30">Programming 30%</span><span style="flex:25">Vertical slice 25%</span><span style="flex:15">Git and tests 15%</span><span style="flex:10">Lean requirements 10%</span><span style="flex:20">No-AI defense 20%</span></div></div></div>
+    <div class="gate-row"><div class="gh"><b>G2</b><span>Week 8</span></div><div class="stack"><div class="gbar"><span style="flex:30;background:var(--lv)"></span><span style="flex:20;background:color-mix(in srgb,var(--lv) 65%,var(--surface))"></span><span style="flex:20;background:color-mix(in srgb,var(--lv) 40%,var(--surface))"></span><span style="flex:10;background:color-mix(in srgb,var(--lv) 20%,var(--surface))"></span><span class="na" style="flex:20"></span></div><div class="gl"><span style="flex:30">Full-stack flow 30%</span><span style="flex:20">Data model 20%</span><span style="flex:20">Tests 20%</span><span style="flex:10">UX and security 10%</span><span style="flex:20">No-AI defense 20%</span></div></div></div>
+    <div class="gate-row"><div class="gh"><b>G3</b><span>Week 12</span></div><div class="stack"><div class="gbar"><span style="flex:20;background:var(--lv)"></span><span style="flex:25;background:color-mix(in srgb,var(--lv) 65%,var(--surface))"></span><span style="flex:20;background:color-mix(in srgb,var(--lv) 40%,var(--surface))"></span><span style="flex:15;background:color-mix(in srgb,var(--lv) 20%,var(--surface))"></span><span class="na" style="flex:20"></span></div><div class="gl"><span style="flex:20">Architecture 20%</span><span style="flex:25">Backend 25%</span><span style="flex:20">Integration and tests 20%</span><span style="flex:15">Security and CI 15%</span><span style="flex:20">No-AI defense 20%</span></div></div></div>
+    <div class="gate-row"><div class="gh"><b>G4</b><span>Week 16</span></div><div class="stack"><div class="gbar"><span style="flex:30;background:var(--lv)"></span><span style="flex:20;background:color-mix(in srgb,var(--lv) 65%,var(--surface))"></span><span style="flex:20;background:color-mix(in srgb,var(--lv) 40%,var(--surface))"></span><span style="flex:10;background:color-mix(in srgb,var(--lv) 20%,var(--surface))"></span><span class="na" style="flex:20"></span></div><div class="gl"><span style="flex:30">Two operations 30%</span><span style="flex:20">Integration and UX 20%</span><span style="flex:20">Quality and security 20%</span><span style="flex:10">Release and evidence 10%</span><span style="flex:20">No-AI defense 20%</span></div></div></div>
+  </div>
+</section>
+
+<!-- P1 DIVIDER -->
+<section class="slide" data-level="p1" data-title="P1 Intermediate">
+  <div class="divider">
+    <div class="stack lg">
+      <div class="lv-code">P1</div>
+      <p class="d-title">Intermediate: from MVP to an integrated V1</p>
+      <p class="d-en">Complete plan · Months 5–8</p>
+      <div class="meta"><div><strong>420</strong><span>hours</span></div><div><strong>140</strong><span>theory</span></div><div><strong>280</strong><span>practical</span></div><div><strong>4</strong><span>gates</span></div></div>
+      <ul class="olist">
+        <li>Testable backend layers</li><li>Server-side auth and RBAC</li><li>Migrations and complex SQL</li><li>Query performance and concurrency</li><li>Multi-page React UI</li><li>Unit, integration and E2E tests</li><li>CI and issue tracking</li><li>Deployable V1 with rollback notes</li>
+      </ul>
+    </div>
+    <figure class="art">
+      <svg viewBox="0 0 600 420" role="img" aria-label="V1: multi-page UI with a multi-step workflow and roles, a query plan, database migrations and tests">
+  <rect x="20" y="20" width="380" height="300" rx="8" class="fs st"/>
+  <path d="M20 44 V28 Q20 20 28 20 H392 Q400 20 400 28 V44Z" class="fp"/>
+  <circle cx="386" cy="32" r="4" class="fl"/><circle cx="374" cy="32" r="4" class="fl"/><circle cx="362" cy="32" r="4" class="fl"/>
+  <rect x="320" y="44" width="80" height="268" class="fi"/><path d="M320 312 H392 Q400 312 400 304 V44 H320Z" class="fi"/>
+  <rect x="332" y="62" width="56" height="20" rx="4" class="fc"/>
+  <rect x="336" y="96" width="48" height="6" rx="3" class="fp" opacity=".55"/><rect x="336" y="114" width="48" height="6" rx="3" class="fp" opacity=".55"/><rect x="336" y="132" width="48" height="6" rx="3" class="fp" opacity=".55"/><rect x="336" y="150" width="48" height="6" rx="3" class="fp" opacity=".55"/>
+  <text x="300" y="68" text-anchor="end" font-size="11" class="fmu mono" direction="ltr">/requests/42/approve</text>
+  <g>
+    <circle cx="270" cy="100" r="13" class="fc"/><path d="M264 100 l4 4 l8 -9" class="nf" stroke="var(--surface)" stroke-width="2"/>
+    <path d="M256 100 H184" stroke="var(--c)" stroke-width="2"/>
+    <circle cx="170" cy="100" r="13" class="fs" stroke="var(--c)" stroke-width="3"/><text x="170" y="105" text-anchor="middle" font-size="12" class="fc disp">2</text>
+    <path d="M156 100 H84" stroke="var(--line)" stroke-width="2"/>
+    <circle cx="70" cy="100" r="13" class="fp" stroke="var(--line)" stroke-width="2"/><text x="70" y="105" text-anchor="middle" font-size="12" class="fmu disp">3</text>
+  </g>
+  <rect x="40" y="128" width="264" height="20" rx="4" class="fs st"/><rect x="40" y="156" width="264" height="20" rx="4" class="fs st"/>
+  <g font-size="11"><rect x="232" y="186" width="72" height="22" rx="11" class="tc"/><text x="268" y="201" text-anchor="middle" class="fi" direction="ltr">Supervisor</text>
+  <rect x="152" y="186" width="72" height="22" rx="11" class="fp"/><text x="188" y="201" text-anchor="middle" class="fmu" direction="ltr">Technician</text>
+  <rect x="72" y="186" width="72" height="22" rx="11" class="fp"/><text x="108" y="201" text-anchor="middle" class="fmu" direction="ltr">Manager</text></g>
+  <rect x="216" y="224" width="88" height="76" rx="6" class="fp"/><rect x="226" y="236" width="68" height="8" rx="4" class="fl"/><rect x="226" y="252" width="50" height="8" rx="4" class="fl"/><rect x="226" y="268" width="60" height="8" rx="4" class="fl"/>
+  <text x="260" y="293" text-anchor="middle" font-size="9" class="fmu mono">loading</text>
+  <rect x="122" y="224" width="88" height="76" rx="6" class="fp"/><rect x="152" y="240" width="28" height="22" rx="3" class="nf" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="3 3"/>
+  <text x="166" y="293" text-anchor="middle" font-size="9" class="fmu mono">empty</text>
+  <rect x="28" y="224" width="88" height="76" rx="6" class="tm"/><circle cx="72" cy="252" r="12" class="fm"/><rect x="70.5" y="244" width="3" height="10" rx="1.5" class="fs"/><circle cx="72" cy="258" r="1.8" class="fs"/>
+  <text x="72" y="293" text-anchor="middle" font-size="9" class="fm mono">error</text>
+  <rect x="414" y="20" width="166" height="150" rx="8" class="fi"/>
+  <g class="mono" font-size="10" direction="ltr">
+    <text x="426" y="44" class="fc">EXPLAIN ANALYZE</text>
+    <text x="426" y="66" class="fp">Index Scan using</text><text x="426" y="80" class="fp">  idx_requests_status</text>
+    <text x="426" y="100" class="fp" opacity=".7">cost=0.29..8.31</text><text x="426" y="116" class="fp" opacity=".7">rows=12  time=0.4ms</text>
+    <text x="426" y="148" class="fy">before: Seq Scan 38ms</text>
+  </g>
+  <rect x="414" y="184" width="166" height="136" rx="8" class="fs st"/>
+  <text x="497" y="206" text-anchor="middle" font-size="11" class="fmu mono">migrations</text>
+  <g class="mono" font-size="10" direction="ltr">
+    <text x="428" y="232" class="fi">001_init.sql</text><text x="428" y="254" class="fi">002_audit_fields.sql</text><text x="428" y="276" class="fi">003_approvals.sql</text><text x="428" y="304" class="fc">rollback verified</text>
+  </g>
+  <circle cx="566" cy="228" r="5" class="fc"/><circle cx="566" cy="250" r="5" class="fc"/><circle cx="566" cy="272" r="5" class="fc"/>
+  <rect x="20" y="336" width="560" height="66" rx="8" class="fs st"/>
+  <g class="mono" font-size="11" direction="ltr">
+    <text x="40" y="362" class="fmu">unit</text><rect x="100" y="353" width="150" height="10" rx="5" class="fc"/><text x="258" y="362" class="fi">84</text>
+    <text x="300" y="362" class="fmu">integration</text><rect x="390" y="353" width="70" height="10" rx="5" class="fc" opacity=".7"/><text x="468" y="362" class="fi">31</text>
+    <text x="40" y="388" class="fmu">e2e</text><rect x="100" y="379" width="30" height="10" rx="5" class="fc" opacity=".45"/><text x="138" y="388" class="fi">9</text>
+    <text x="300" y="388" class="fmu">component</text><rect x="390" y="379" width="54" height="10" rx="5" class="fc" opacity=".6"/><text x="452" y="388" class="fi">24</text>
+  </g>
+</svg>
+      <figcaption><span>Expected outcome: <b>multi-page V1 with roles and reliable data</b></span><span>Illustrative example</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- P1 MAP & DECISIONS -->
+<section class="slide" data-level="p1" data-title="P1 map and decisions">
+  <header class="s-head"><span class="tag">P1 map and decisions</span><h2>Each month hardens one layer of the system, and each layer has a gate</h2><p>P1 is AI-first but engineering-led: learners plan small changes, request AI support, inspect code and dependencies, run tests and explain their decisions.</p></header>
+  <div class="s-body row2" style="grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)">
+    <ol class="steps">
+      <li><span class="k">G1</span><span class="t"><b>Month 1 · Backend reliability</b><span class="muted xs">MVP audit, layers and services, typed API contracts, authentication and RBAC, transactions.</span></span></li>
+      <li><span class="k">G2</span><span class="t"><b>Month 2 · Database engineering</b><span class="muted xs">Advanced SQL and indexes, migrations and rollback, transactions and concurrency, backup and restore.</span></span></li>
+      <li><span class="k">G3</span><span class="t"><b>Month 3 · Frontend integration</b><span class="muted xs">React architecture, routing, state and data fetching, accessibility, multi-step workflows.</span></span></li>
+      <li><span class="k">G4</span><span class="t"><b>Month 4 · V1 release</b><span class="muted xs">Two new linked workflows, E2E tests, threat modelling, observability, CI, deployment and defense.</span></span></li>
+    </ol>
+    <table class="tablelite">
+      <thead><tr><th>Item</th><th>Rule</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Progression</td><td class="xs">P0 → P1 → P2, same individual project throughout</td><td><span class="check ok">Established</span></td></tr>
+        <tr><td>Duration</td><td class="xs">4 months, 16 weeks, 420 onsite hours</td><td><span class="check ok">Established</span></td></tr>
+        <tr><td>Schedule</td><td class="xs">Continuation of the P0 timetable</td><td><span class="check wait">Proposed</span></td></tr>
+        <tr><td>Theory / practice</td><td class="xs">140 / 280, i.e. 35 / 70 each month</td><td><span class="check wait">Proposed</span></td></tr>
+        <tr><td>Assessment</td><td class="xs">P0 policy extended: ≥80%, all mandatory deliverables, separate no-AI pass</td><td><span class="check wait">Proposed</span></td></tr>
+        <tr><td>V1 scope</td><td class="xs">P0 flows + two substantial new linked workflows, calibrated per project</td><td><span class="check wait">Proposed</span></td></tr>
+        <tr><td>P2 boundary</td><td class="xs">Advanced infrastructure, scaling, migration and automation stay mainly in P2</td><td><span class="check ok">Established</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="slide" data-level="p1" data-title="P1 month 1"><header class="s-head"><span class="tag">P1 · Month 1 · Backend reliability · Weeks 1–4</span><h2>A backend you can rely on</h2></header><div class="wcols"><div class="wcol"><header><span class="wn">1</span><span class="wt">P0-to-P1 transition, code audit and refactoring</span><span class="wh">9 + 17 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>MVP baseline report; technical-debt register</span></li><li><span>Mon</span><span>Architecture v2; first refactoring PR</span></li><li><span>Tue</span><span>Typed contracts; passing regression tests</span></li><li><span>Wed</span><span>Merged PR; AI verification log</span></li></ul></div><div class="wcol"><header><span class="wn">2</span><span class="wt">Backend domain modelling and service design</span><span class="wh">9 + 17 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>Domain model and invariants checklist</span></li><li><span>Mon</span><span>Refactored service modules</span></li><li><span>Tue</span><span>Validation tests and error contract</span></li><li><span>Wed</span><span>Unit test suite; coverage report</span></li></ul></div><div class="wcol"><header><span class="wn">3</span><span class="wt">Authentication, authorization and API security</span><span class="wh">9 + 17 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>Authentication flow and threat notes</span></li><li><span>Mon</span><span>RBAC policy and tests</span></li><li><span>Tue</span><span>Security checklist and remediations</span></li><li><span>Wed</span><span>Security lab evidence; peer review</span></li></ul><p class="wfoot"><b>Without AI</b>Fix a deliberately flawed endpoint and explain exploit prevention</p></div><div class="wcol gate"><span class="gbadge">G1</span><header><span class="wn">4</span><span class="wt">Backend reliability gate</span><span class="wh">8 + 19 = 27 h</span></header><ul class="days"><li><span>Sun</span><span>Transactional service + tests</span></li><li><span>Mon</span><span>Integration test collection</span></li><li><span>Tue</span><span>Backend RC; change log</span></li><li><span>Wed</span><span>Gate 1 scorecard; remediation plan if needed</span></li></ul><p class="wfoot"><b>Without AI</b>Demonstrate a secure service and fix a small defect independently</p></div></div></section>
+<section class="slide" data-level="p1" data-title="P1 month 2"><header class="s-head"><span class="tag">P1 · Month 2 · Database engineering · Weeks 5–8</span><h2>Data that is correct, fast and recoverable</h2></header><div class="wcols"><div class="wcol"><header><span class="wn">5</span><span class="wt">Advanced SQL and relational design</span><span class="wh">9 + 17 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>SQL exercise set</span></li><li><span>Mon</span><span>Index rationale; query benchmarks</span></li><li><span>Tue</span><span>Migration scripts and rollback notes</span></li><li><span>Wed</span><span>Database integrity test suite</span></li></ul></div><div class="wcol"><header><span class="wn">6</span><span class="wt">Transactions, concurrency and data access</span><span class="wh">9 + 17 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>Concurrency lab</span></li><li><span>Mon</span><span>Safe update implementation</span></li><li><span>Tue</span><span>Paginated API and tests</span></li><li><span>Wed</span><span>Reviewed query PR; performance notes</span></li></ul></div><div class="wcol"><header><span class="wn">7</span><span class="wt">Data modelling for enterprise modules</span><span class="wh">9 + 17 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>ERD v2 and change proposal</span></li><li><span>Mon</span><span>Data handling checklist</span></li><li><span>Tue</span><span>Restore verification evidence</span></li><li><span>Wed</span><span>Schema v2; passing DB tests</span></li></ul></div><div class="wcol gate"><span class="gbadge">G2</span><header><span class="wn">8</span><span class="wt">Database engineering gate</span><span class="wh">8 + 19 = 27 h</span></header><ul class="days"><li><span>Sun</span><span>Benchmark report</span></li><li><span>Mon</span><span>Working data workflow</span></li><li><span>Tue</span><span>Reproducible migration package</span></li><li><span>Wed</span><span>Gate 2 scorecard; remediation plan if needed</span></li></ul><p class="wfoot"><b>Without AI</b>Explain a query plan, correct faulty SQL and defend schema changes</p></div></div></section>
+<section class="slide" data-level="p1" data-title="P1 month 3"><header class="s-head"><span class="tag">P1 · Month 3 · Frontend integration · Weeks 9–12</span><h2>A frontend that serves every role clearly</h2></header><div class="wcols"><div class="wcol"><header><span class="wn">9</span><span class="wt">Modern frontend architecture</span><span class="wh">9 + 17 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>Component map and starter library</span></li><li><span>Mon</span><span>Working route structure</span></li><li><span>Tue</span><span>Validated form screens</span></li><li><span>Wed</span><span>Reviewed components; debug evidence</span></li></ul><p class="wfoot"><b>Without AI</b>Trace a frontend bug and review a peer PR</p></div><div class="wcol"><header><span class="wn">10</span><span class="wt">State, data fetching and UX quality</span><span class="wh">9 + 17 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>State design note</span></li><li><span>Mon</span><span>Connected views and tests</span></li><li><span>Tue</span><span>State coverage checklist</span></li><li><span>Wed</span><span>Accessibility review; responsive screens</span></li></ul></div><div class="wcol"><header><span class="wn">11</span><span class="wt">Complex frontend workflows</span><span class="wh">9 + 17 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>Multi-step workflow</span></li><li><span>Mon</span><span>Role-specific views + security tests</span></li><li><span>Tue</span><span>UI test suite</span></li><li><span>Wed</span><span>Merged PRs; integration log</span></li></ul></div><div class="wcol gate"><span class="gbadge">G3</span><header><span class="wn">12</span><span class="wt">Frontend integration gate</span><span class="wh">8 + 19 = 27 h</span></header><ul class="days"><li><span>Sun</span><span>Contract verification report</span></li><li><span>Mon</span><span>Usability issue log</span></li><li><span>Tue</span><span>Frontend RC and test evidence</span></li><li><span>Wed</span><span>Gate 3 scorecard; remediation plan if needed</span></li></ul><p class="wfoot"><b>Without AI</b>Modify a component and debug API integration independently</p></div></div></section>
+<section class="slide" data-level="p1" data-title="P1 month 4"><header class="s-head"><span class="tag">P1 · Month 4 · V1 release · Weeks 13–16</span><h2>A complete V1, deployed and defended</h2></header><div class="wcols"><div class="wcol"><header><span class="wn">13</span><span class="wt">V1 scope completion and system integration</span><span class="wh">9 + 17 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>V1 scope baseline</span></li><li><span>Mon</span><span>Working workflow A</span></li><li><span>Tue</span><span>Working workflow B</span></li><li><span>Wed</span><span>Integration test report</span></li></ul></div><div class="wcol"><header><span class="wn">14</span><span class="wt">Quality, security and observability</span><span class="wh">9 + 17 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>E2E suite</span></li><li><span>Mon</span><span>Threat register and fixes</span></li><li><span>Tue</span><span>Observability baseline</span></li><li><span>Wed</span><span>Performance evidence</span></li></ul></div><div class="wcol"><header><span class="wn">15</span><span class="wt">V1 release engineering and documentation</span><span class="wh">9 + 17 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>Deployment runbook</span></li><li><span>Mon</span><span>CI evidence</span></li><li><span>Tue</span><span>Release checklist and rollback notes</span></li><li><span>Wed</span><span>Portfolio case study draft; release candidate</span></li></ul></div><div class="wcol gate"><span class="gbadge">G4</span><header><span class="wn">16</span><span class="wt">V1 final release and technical defense</span><span class="wh">8 + 19 = 27 h</span></header><ul class="days"><li><span>Sun</span><span>V1 final build</span></li><li><span>Mon</span><span>UAT evidence and feedback</span></li><li><span>Tue</span><span>Submission package</span></li><li><span>Wed</span><span>Gate 4 record; V1 release notes</span></li></ul><p class="wfoot"><b>Without AI</b>Live demo, code change and debugging, individual defense</p></div></div></section>
+
+<!-- P1 GATES -->
+<section class="slide" data-level="p1" data-title="P1 gates">
+  <header class="s-head"><span class="tag">P1 gates</span><h2>Four gates with defined mandatory evidence</h2></header>
+  <div class="s-body" style="gap:1.4cqw">
+    <div class="row3" style="grid-template-columns:repeat(4,minmax(0,1fr));gap:.9cqw">
+      <div class="panel"><h3><span class="code">G1</span> Backend reliability</h3><ul class="olist one xs"><li>MVP baseline and refactoring record</li><li>Typed API contracts and testable service boundaries</li><li>Authentication and server-side RBAC</li><li>Validation, unit/integration tests, security fixes</li></ul></div>
+      <div class="panel"><h3><span class="code">G2</span> Database engineering</h3><ul class="olist one xs"><li>Versioned migrations and ERD update</li><li>Complex SQL and documented query plans</li><li>Transaction and concurrency handling</li><li>Data integrity, restore and integration tests</li></ul></div>
+      <div class="panel"><h3><span class="code">G3</span> Frontend integration</h3><ul class="olist one xs"><li>Responsive multi-page UI with accessible forms</li><li>Loading, error and empty states</li><li>Role-aware journeys with server-side authorization</li><li>Component and user-flow tests, usability findings</li></ul></div>
+      <div class="panel"><h3><span class="code">G4</span> V1 release</h3><ul class="olist one xs"><li>All P0 MVP flows preserved and tested</li><li>At least two new substantial linked workflows</li><li>E2E tests, security review, critical bugs closed</li><li>Reproducible deployment, CI, case study</li></ul></div>
+    </div>
+    <p class="note">Every gate also requires the Git and AI Work Log, a live demo and a no-AI defense. The same weights apply to all four gates and are proposed for approval:</p>
+    <div class="gate-row"><div class="gh"><b>G1–G4</b><span>Each gate</span></div><div class="stack"><div class="gbar"><span style="flex:30;background:var(--lv)"></span><span style="flex:20;background:color-mix(in srgb,var(--lv) 65%,var(--surface))"></span><span style="flex:20;background:color-mix(in srgb,var(--lv) 40%,var(--surface))"></span><span style="flex:10;background:color-mix(in srgb,var(--lv) 20%,var(--surface))"></span><span class="na" style="flex:20"></span></div><div class="gl"><span style="flex:30">Functional correctness 30%</span><span style="flex:20">Quality and security 20%</span><span style="flex:20">Tests and evidence 20%</span><span style="flex:10">Git and docs 10%</span><span style="flex:20">No-AI defense 20%</span></div></div></div>
+  </div>
+</section>
+
+<!-- P1 RISKS -->
+<section class="slide" data-level="p1" data-title="P1 risks and V1 handoff">
+  <header class="s-head"><span class="tag">P1 risks and handoff</span><h2>Principal risks and how they are contained</h2></header>
+  <div class="s-body row2 wide-r">
+    <table class="tablelite">
+      <thead><tr><th>Risk</th><th>Mitigation</th></tr></thead>
+      <tbody>
+        <tr><td>Uneven readiness after P0</td><td class="xs muted">Entry diagnostic</td></tr>
+        <tr><td>Overreliance on AI</td><td class="xs muted">Weekly no-AI drills</td></tr>
+        <tr><td>Insecure authentication</td><td class="xs muted">Security lab, peer review, synthetic data</td></tr>
+        <tr><td>Data loss during migration</td><td class="xs muted">Migration and restore rehearsal first</td></tr>
+        <tr><td>Frontend integration delays</td><td class="xs muted">Vertical slices instead of late integration</td></tr>
+        <tr><td>Excessive V1 scope</td><td class="xs muted">Scope freeze in week 13</td></tr>
+        <tr><td>Overloaded instructors</td><td class="xs muted">Scheduled review capacity, common rubric, sample-based audit</td></tr>
+      </tbody>
+    </table>
+    <div class="stack lg">
+      <div class="panel"><h3>V1 definition</h3><p class="xs muted">A demonstrable, maintainable educational release. It keeps P0 features and adds approved linked workflows, role-based access, a realistic relational schema, reproducible setup, core automated tests and a deployed demo environment.</p></div>
+      <div class="panel"><h3>Handoff to P2</h3><p class="xs muted">V1's architecture, technical debt, risks and release evidence become the baseline P2 starts from.</p></div>
+      <div class="panel"><h3>Integrity and collaboration</h3><p class="xs muted">At least one peer review a week, one short team integration exercise a month, and individual project variations that make copying less effective.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- P2 DIVIDER -->
+<section class="slide" data-level="p2" data-title="P2 Advanced">
+  <div class="divider">
+    <div class="stack lg">
+      <div class="lv-code">P2</div>
+      <p class="d-title">Advanced: running software responsibly</p>
+      <p class="d-en">DevOps, QA, security, migration, scalability, automation · Months 9–12</p>
+      <div class="meta"><div><strong>420</strong><span>hours</span></div><div><strong>64</strong><span>training days</span></div><div><strong>280</strong><span>practical</span></div><div><strong>4</strong><span>gates</span></div></div>
+      <ul class="olist">
+        <li>Repeatable deployments</li><li>Environment isolation</li><li>Automated checks and CI/CD</li><li>Security hardening</li><li>Observability and incidents</li><li>Data migration and rollback</li><li>Performance and reliability testing</li><li>Operational documentation</li>
+      </ul>
+    </div>
+    <figure class="art">
+      <svg viewBox="0 0 600 420" role="img" aria-label="V2: pipeline from build to prod-like, monitoring with health checks and latency, incident runbook and verified backups">
+  <rect x="20" y="20" width="560" height="92" rx="8" class="fs st"/>
+  <g font-size="11" class="mono" direction="ltr">
+    <rect x="40" y="46" width="80" height="40" rx="20" class="fp"/><text x="80" y="70" text-anchor="middle" class="fi">build</text>
+    <rect x="146" y="46" width="80" height="40" rx="20" class="fp"/><text x="186" y="70" text-anchor="middle" class="fi">test</text>
+    <rect x="252" y="46" width="80" height="40" rx="20" class="fp"/><text x="292" y="70" text-anchor="middle" class="fi">scan</text>
+    <rect x="358" y="46" width="88" height="40" rx="20" class="ty"/><text x="402" y="70" text-anchor="middle" class="fi">staging</text>
+    <rect x="472" y="46" width="88" height="40" rx="20" class="fy"/><text x="516" y="70" text-anchor="middle" class="fi">prod-like</text>
+  </g>
+  <path d="M122 66 h22 M228 66 h22 M334 66 h22 M448 66 h22" stroke="var(--muted)" stroke-width="2"/>
+  <circle cx="118" cy="50" r="7" class="fc"/><circle cx="224" cy="50" r="7" class="fc"/><circle cx="330" cy="50" r="7" class="fc"/><circle cx="442" cy="50" r="7" class="fc"/><circle cx="556" cy="50" r="7" class="fc"/>
+  <rect x="20" y="126" width="370" height="276" rx="8" class="fs st"/>
+  <g font-size="11" class="mono" direction="ltr">
+    <rect x="34" y="140" width="108" height="40" rx="6" class="fp"/><circle cx="50" cy="160" r="6" class="fc"/><text x="64" y="164" class="fi">api</text><text x="132" y="164" text-anchor="end" class="fmu">200</text>
+    <rect x="151" y="140" width="108" height="40" rx="6" class="fp"/><circle cx="167" cy="160" r="6" class="fc"/><text x="181" y="164" class="fi">db</text><text x="249" y="164" text-anchor="end" class="fmu">ok</text>
+    <rect x="268" y="140" width="108" height="40" rx="6" class="fp"/><circle cx="284" cy="160" r="6" class="fc"/><text x="298" y="164" class="fi">queue</text><text x="366" y="164" text-anchor="end" class="fmu">ok</text>
+    <text x="34" y="208" class="fmu">p95 latency (ms)</text>
+  </g>
+  <rect x="34" y="236" width="342" height="1" class="fl"/><rect x="34" y="276" width="342" height="1" class="fl"/><rect x="34" y="316" width="342" height="1" class="fl"/><rect x="34" y="356" width="342" height="1" class="fl"/>
+  <path d="M34 250 H376" stroke="var(--m)" stroke-width="1.5" stroke-dasharray="5 4"/><text x="372" y="244" text-anchor="end" font-size="10" class="fm mono" direction="ltr">alert 300</text>
+  <polygon points="34,330 70,322 106,326 142,310 178,262 214,300 250,318 286,322 322,316 358,320 376,318 376,370 34,370" class="ty"/>
+  <polyline points="34,330 70,322 106,326 142,310 178,262 214,300 250,318 286,322 322,316 358,320 376,318" class="nf" stroke="var(--y)" stroke-width="2.5" stroke-linejoin="round"/>
+  <circle cx="178" cy="262" r="5" class="fm"/>
+  <text x="34" y="390" font-size="10" class="fmu mono" direction="ltr">incident #3 → mitigated</text>
+  <rect x="404" y="126" width="176" height="174" rx="8" class="fi"/>
+  <text x="492" y="152" text-anchor="middle" font-size="13" class="fs disp">Runbook</text>
+  <g class="mono" font-size="10" direction="ltr">
+    <circle cx="420" cy="176" r="4" class="fm"/><text x="432" y="180" class="fp">10:02 detected</text>
+    <circle cx="420" cy="200" r="4" class="fy"/><text x="432" y="204" class="fp">10:09 rolled back</text>
+    <circle cx="420" cy="224" r="4" class="fc"/><text x="432" y="228" class="fp">10:15 resolved</text>
+    <circle cx="420" cy="248" r="4" class="fp"/><text x="432" y="252" class="fp">postmortem filed</text>
+  </g>
+  <path d="M420 180 V244" stroke="var(--paper)" stroke-width="1" opacity=".4"/>
+  <rect x="404" y="312" width="176" height="90" rx="8" class="fs st"/>
+  <g class="mono" font-size="11" direction="ltr">
+    <text x="418" y="338" class="fi">backup 02:00</text><circle cx="564" cy="334" r="6" class="fc"/>
+    <text x="418" y="362" class="fi">restore drill</text><circle cx="564" cy="358" r="6" class="fc"/>
+    <text x="418" y="386" class="fi">migration 007</text><circle cx="564" cy="382" r="6" class="fc"/>
+  </g>
+</svg>
+      <figcaption><span>Expected outcome: <b>V2 deployed, monitored and recoverable</b></span><span>Illustrative; figures are hypothetical</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- P2 MAP -->
+<section class="slide" data-level="p2" data-title="P2 map and assumptions">
+  <header class="s-head"><span class="tag">P2 map and assumptions</span><h2>An accepted V1 and verified backups come before any migration or deployment</h2></header>
+  <div class="s-body row2">
+    <ol class="steps">
+      <li><span class="k">G1</span><span class="t"><b>Month 1 · Reproducible delivery</b><span class="muted xs">V1 audit, containers, CI/CD and automated quality gates.</span></span></li>
+      <li><span class="k">G2</span><span class="t"><b>Month 2 · Quality and security</b><span class="muted xs">Test pyramid, threat modelling, observability, incident drill.</span></span></li>
+      <li><span class="k">G3</span><span class="t"><b>Month 3 · Resilient architecture</b><span class="muted xs">Migration and rollback, performance and scaling, async jobs and retries.</span></span></li>
+      <li><span class="k">G4</span><span class="t"><b>Month 4 · Deployed V2</b><span class="muted xs">Automation and responsible LLM use, UAT, release engineering, portfolio and defense.</span></span></li>
+    </ol>
+    <div class="stack lg">
+      <div class="panel"><h3>Assumptions</h3><p class="xs muted">16 onsite weeks, 64 days, 420 hours (140 / 280), with the P0 daily schedule and gate policy, subject to level-wide approval.</p></div>
+      <div class="panel"><h3>Cloud and external integrations</h3><p class="xs muted">Depend on approved budgets and service availability. Local or simulated alternatives are acceptable when equivalent evidence is recorded.</p></div>
+      <div class="panel"><h3>Specialist reviews</h3><p class="xs muted">Scheduled security and DevOps reviewers, and protected assessment slots.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-level="p2" data-title="P2 month 1"><header class="s-head"><span class="tag">P2 · Month 1 · Reproducible delivery · Weeks 1–4</span><h2>The same system builds and deploys anywhere</h2></header><div class="wcols"><div class="wcol"><header><span class="wn">1</span><span class="wt">DevOps baseline and release audit</span><span class="wh">9 + 17 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>Baseline findings</span></li><li><span>Mon</span><span>Environment matrix</span></li><li><span>Tue</span><span>Operational acceptance criteria</span></li><li><span>Wed</span><span>P2 roadmap</span></li></ul><p class="wfoot"><b>Weekly outcome</b>V1 audit, environments, release risks, operational backlog</p></div><div class="wcol"><header><span class="wn">2</span><span class="wt">Containers and reproducible environments</span><span class="wh">9 + 17 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>Container concepts check</span></li><li><span>Mon</span><span>Working image</span></li><li><span>Tue</span><span>Local container stack</span></li><li><span>Wed</span><span>Rebuild evidence</span></li></ul><p class="wfoot"><b>Weekly outcome</b>Dockerfiles, Compose, environment variables, local parity</p></div><div class="wcol"><header><span class="wn">3</span><span class="wt">CI/CD and automated quality gates</span><span class="wh">9 + 17 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>Pipeline design</span></li><li><span>Mon</span><span>CI workflow</span></li><li><span>Tue</span><span>Protected checks</span></li><li><span>Wed</span><span>Passing CI + review</span></li></ul><p class="wfoot"><b>Weekly outcome</b>Build, test, lint and security workflow; PR protection</p></div><div class="wcol gate"><span class="gbadge">G1</span><header><span class="wn">4</span><span class="wt">P2-G1: reproducible delivery</span><span class="wh">8 + 19 = 27 h</span></header><ul class="days"><li><span>Sun</span><span>Reproducible build log</span></li><li><span>Mon</span><span>Rollback checklist</span></li><li><span>Tue</span><span>Independent test record</span></li><li><span>Wed</span><span>G1 decision</span></li></ul><p class="wfoot"><b>Without AI</b>Repair a broken build or configuration</p></div></div></section>
+<section class="slide" data-level="p2" data-title="P2 month 2"><header class="s-head"><span class="tag">P2 · Month 2 · Quality and security · Weeks 5–8</span><h2>Tests, security and monitoring catch problems early</h2></header><div class="wcols"><div class="wcol"><header><span class="wn">5</span><span class="wt">QA strategy and test pyramid</span><span class="wh">9 + 17 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>QA matrix</span></li><li><span>Mon</span><span>Unit suite</span></li><li><span>Tue</span><span>Integration suite</span></li><li><span>Wed</span><span>QA report</span></li></ul><p class="wfoot"><b>Weekly outcome</b>Unit, integration and E2E tests, fixtures, coverage gaps</p></div><div class="wcol"><header><span class="wn">6</span><span class="wt">Security threat modelling and hardening</span><span class="wh">9 + 17 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>Threat model</span></li><li><span>Mon</span><span>Access-control tests</span></li><li><span>Tue</span><span>Security findings</span></li><li><span>Wed</span><span>Remediation evidence</span></li></ul><p class="wfoot"><b>Weekly outcome</b>Threat model, RBAC verification, dependency and secret scanning</p></div><div class="wcol"><header><span class="wn">7</span><span class="wt">Observability and incident response</span><span class="wh">9 + 17 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>Correlated log events</span></li><li><span>Mon</span><span>Health endpoints</span></li><li><span>Tue</span><span>Monitoring dashboard</span></li><li><span>Wed</span><span>Incident report</span></li></ul><p class="wfoot"><b>Weekly outcome</b>Structured logs, metrics, health checks, alerts, runbooks</p></div><div class="wcol gate"><span class="gbadge">G2</span><header><span class="wn">8</span><span class="wt">P2-G2: quality and security</span><span class="wh">8 + 19 = 27 h</span></header><ul class="days"><li><span>Sun</span><span>QA evidence</span></li><li><span>Mon</span><span>Recovery log</span></li><li><span>Tue</span><span>Independent test</span></li><li><span>Wed</span><span>G2 decision</span></li></ul><p class="wfoot"><b>Without AI</b>Debug a security or testing failure</p></div></div></section>
+<section class="slide" data-level="p2" data-title="P2 month 3"><header class="s-head"><span class="tag">P2 · Month 3 · Resilient architecture · Weeks 9–12</span><h2>The system handles load and failure, and recovers</h2></header><div class="wcols"><div class="wcol"><header><span class="wn">9</span><span class="wt">Database migration and rollback</span><span class="wh">9 + 17 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>Migration plan</span></li><li><span>Mon</span><span>Migration scripts</span></li><li><span>Tue</span><span>Restore evidence</span></li><li><span>Wed</span><span>Rollback validation</span></li></ul><p class="wfoot"><b>Weekly outcome</b>Versioned migrations, backup and restore, rollback drill</p></div><div class="wcol"><header><span class="wn">10</span><span class="wt">Performance and scalability</span><span class="wh">9 + 17 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>Load test plan</span></li><li><span>Mon</span><span>Baseline metrics</span></li><li><span>Tue</span><span>Optimization commits</span></li><li><span>Wed</span><span>Performance report</span></li></ul><p class="wfoot"><b>Weekly outcome</b>Load profiles, indexing, caching, bottleneck analysis</p></div><div class="wcol"><header><span class="wn">11</span><span class="wt">Reliability and asynchronous workflows</span><span class="wh">9 + 17 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>Failure scenarios</span></li><li><span>Mon</span><span>Async workflow</span></li><li><span>Tue</span><span>Resilience tests</span></li><li><span>Wed</span><span>Reliability report</span></li></ul><p class="wfoot"><b>Weekly outcome</b>Retries, idempotency, queues and jobs, failure handling</p></div><div class="wcol gate"><span class="gbadge">G3</span><header><span class="wn">12</span><span class="wt">P2-G3: resilient architecture</span><span class="wh">8 + 19 = 27 h</span></header><ul class="days"><li><span>Sun</span><span>Data integrity proof</span></li><li><span>Mon</span><span>Benchmark report</span></li><li><span>Tue</span><span>Independent test</span></li><li><span>Wed</span><span>G3 decision</span></li></ul><p class="wfoot"><b>Without AI</b>Explain and fix a failure or data-integrity issue</p></div></div></section>
+<section class="slide" data-level="p2" data-title="P2 month 4"><header class="s-head"><span class="tag">P2 · Month 4 · Deployed V2 · Weeks 13–16</span><h2>V2 deployed, monitored and handed over</h2></header><div class="wcols"><div class="wcol"><header><span class="wn">13</span><span class="wt">Automation and responsible LLM integration</span><span class="wh">9 + 17 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>Automation spec</span></li><li><span>Mon</span><span>Working automation</span></li><li><span>Tue</span><span>Safe integration demo</span></li><li><span>Wed</span><span>Automation test evidence</span></li></ul><p class="wfoot"><b>Weekly outcome</b>Automation workflow; bounded LLM feature with safeguards</p></div><div class="wcol"><header><span class="wn">14</span><span class="wt">V2 integration and user acceptance</span><span class="wh">9 + 17 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>Release scope</span></li><li><span>Mon</span><span>Integration suite</span></li><li><span>Tue</span><span>UAT results</span></li><li><span>Wed</span><span>Release candidate</span></li></ul><p class="wfoot"><b>Weekly outcome</b>Integration fixes, accessibility, UAT and regression</p></div><div class="wcol"><header><span class="wn">15</span><span class="wt">Release engineering and portfolio</span><span class="wh">9 + 17 = 26 h</span></header><ul class="days"><li><span>Sun</span><span>Deployment checklist</span></li><li><span>Mon</span><span>V2 endpoint/demo</span></li><li><span>Tue</span><span>Release validation</span></li><li><span>Wed</span><span>Portfolio + runbook</span></li></ul><p class="wfoot"><b>Weekly outcome</b>Prod-like release, operations docs, case study</p></div><div class="wcol gate"><span class="gbadge">G4</span><header><span class="wn">16</span><span class="wt">P2-G4: deployed V2 and defense</span><span class="wh">8 + 19 = 27 h</span></header><ul class="days"><li><span>Sun</span><span>Operations evidence</span></li><li><span>Mon</span><span>V2 demo</span></li><li><span>Tue</span><span>Individual defense</span></li><li><span>Wed</span><span>G4 decision</span></li></ul><p class="wfoot"><b>Without AI</b>Live system walkthrough and independent fix</p></div></div></section>
+
+<!-- P2 GATES -->
+<section class="slide" data-level="p2" data-title="P2 gates">
+  <header class="s-head"><span class="tag">P2 gates</span><h2>Every gate ends with an independent no-AI fix</h2></header>
+  <div class="s-body" style="gap:1.2cqw">
+    <table class="tablelite">
+      <thead><tr><th style="width:12%">Gate</th><th>Minimum required evidence</th><th style="width:30%">Independent defense</th></tr></thead>
+      <tbody>
+        <tr><td><span class="code">G1</span> <span class="xs muted">Week 4</span></td><td class="xs">Clean container build, reproducible environment, passing CI, rollback checklist</td><td class="xs">Repair a broken build or configuration</td></tr>
+        <tr><td><span class="code">G2</span> <span class="xs muted">Week 8</span></td><td class="xs">Automated test suite, threat model, role checks, dependency scan, observability, incident drill</td><td class="xs">Debug a security or testing failure</td></tr>
+        <tr><td><span class="code">G3</span> <span class="xs muted">Week 12</span></td><td class="xs">Versioned migration, verified restore and rollback, benchmark, resilience tests</td><td class="xs">Explain and fix a failure or data-integrity issue</td></tr>
+        <tr><td><span class="code">G4</span> <span class="xs muted">Week 16</span></td><td class="xs">Deployed V2, release evidence, UAT, smoke tests, operations runbook, portfolio case study</td><td class="xs">Live system walkthrough and independent fix</td></tr>
+      </tbody>
+    </table>
+    <div class="gate-row"><div class="gh"><b>G1–G4</b><span>Each gate</span></div><div class="stack"><div class="gbar"><span style="flex:30;background:var(--lv)"></span><span style="flex:25;background:color-mix(in srgb,var(--lv) 65%,var(--surface))"></span><span style="flex:20;background:color-mix(in srgb,var(--lv) 40%,var(--surface))"></span><span style="flex:10;background:color-mix(in srgb,var(--lv) 20%,var(--surface))"></span><span class="na" style="flex:15"></span></div><div class="gl"><span style="flex:30">Engineering correctness 30%</span><span style="flex:25">Testing and evidence 25%</span><span style="flex:20">Security and reliability 20%</span><span style="flex:10">Docs and workflow 10%</span><span style="flex:15">No-AI defense 15%</span></div></div></div>
+    <p class="note">These weights and the standalone no-AI minimum require formal approval.</p>
+  </div>
+</section>
+
+<!-- V2 ACCEPTANCE & OPS -->
+<section class="slide" data-level="p2" data-title="P2 V2 acceptance and operations">
+  <header class="s-head"><span class="tag">P2 acceptance and daily operations</span><h2>When V2 is accepted, and what instructors record every day</h2></header>
+  <div class="s-body row2">
+    <div class="stack lg">
+      <p class="lead" style="font-size:var(--t-body)">The final release preserves the P0 MVP and P1 V1 baseline, and shows:</p>
+      <ul class="olist one small">
+        <li>Reliable deployment and automated test evidence</li><li>Access controls and recoverable data migrations</li><li>Observability, documented performance and incident response</li><li>One bounded automation improvement</li><li>Optional LLM integration only where feasible and safe, with a non-LLM alternative</li>
+      </ul>
+      <p class="note">Every feature must be individually attributable, tested, documented and defended.</p>
+    </div>
+    <ol class="steps">
+      <li><span class="k">Day</span><span class="t"><b>Every day</b><span class="muted xs">Attendance, theory/practical time, issue or task, commit or PR link, test results, AI Work Log entry, instructor review status.</span></span></li>
+      <li><span class="k">Week</span><span class="t"><b>Every week</b><span class="muted xs">A brief individual code review and a peer review with a different learner.</span></span></li>
+      <li><span class="k">Gate</span><span class="t"><b>Every gate</b><span class="muted xs">An individual supervised no-AI assessment and a documented technical defense.</span></span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- GATE POLICY -->
+<section class="slide" data-level="k" data-title="Gate policy">
+  <div class="divider">
+    <div class="stack lg">
+      <span class="tag">Gate policy across all three levels</span>
+      <p class="d-title" style="font-size:4cqw">12 gates, one rule: no progress before passing</p>
+      <ul class="olist one">
+        <li>≥80% overall <span class="check ok">Approved in P0</span></li>
+        <li>Every mandatory deliverable complete <span class="check ok">Approved in P0</span></li>
+        <li>Separate no-AI pass, proposed minimum 70% <span class="check wait">Proposed</span></li>
+        <li>Dependent work is not accepted before the gate is passed; non-dependent sessions may be attended</li>
+      </ul>
+      <div class="hbars" style="gap:.5cqw">
+        <span class="xs muted">Weight of the no-AI defense in each level</span>
+        <div class="hb lvl-p0"><span class="small">P0</span><span class="track"><i style="--w:100%"></i></span><span class="v">20%</span></div>
+        <div class="hb lvl-p1"><span class="small">P1</span><span class="track"><i style="--w:100%"></i></span><span class="v">20%</span></div>
+        <div class="hb lvl-p2"><span class="small">P2</span><span class="track"><i style="--w:75%"></i></span><span class="v">15%</span></div>
+      </div>
+    </div>
+    <figure class="art">
+      <svg viewBox="0 0 600 420" role="img" aria-label="Gate G2 scorecard: weighted criteria, mandatory evidence, no-AI test result and decision">
+        <rect x="20" y="20" width="560" height="380" rx="8" class="fs st"/>
+        <text x="560" y="56" text-anchor="end" font-size="18" class="fi disp" direction="ltr">P0 · G2 scorecard</text>
+        <text x="40" y="56" font-size="11" class="fmu mono" direction="ltr">week 8</text>
+        <rect x="40" y="70" width="520" height="1" class="fl"/>
+        <g font-size="12" direction="ltr">
+          <text x="560" y="100" text-anchor="end" class="fi">Full-stack flow</text><rect x="300" y="91" width="120" height="10" rx="5" class="fl"/><rect x="314" y="91" width="106" height="10" rx="5" class="fc"/><text x="280" y="100" text-anchor="end" class="fmu mono" direction="ltr">27/30</text>
+          <text x="560" y="128" text-anchor="end" class="fi">Data model</text><rect x="300" y="119" width="120" height="10" rx="5" class="fl"/><rect x="324" y="119" width="96" height="10" rx="5" class="fc"/><text x="280" y="128" text-anchor="end" class="fmu mono" direction="ltr">16/20</text>
+          <text x="560" y="156" text-anchor="end" class="fi">Tests</text><rect x="300" y="147" width="120" height="10" rx="5" class="fl"/><rect x="318" y="147" width="102" height="10" rx="5" class="fc"/><text x="280" y="156" text-anchor="end" class="fmu mono" direction="ltr">17/20</text>
+          <text x="560" y="184" text-anchor="end" class="fi">UX and security</text><rect x="300" y="175" width="120" height="10" rx="5" class="fl"/><rect x="330" y="175" width="90" height="10" rx="5" class="fc"/><text x="280" y="184" text-anchor="end" class="fmu mono" direction="ltr">7.5/10</text>
+          <text x="560" y="212" text-anchor="end" class="fi">No-AI defense</text><rect x="300" y="203" width="120" height="10" rx="5" class="fl"/><rect x="330" y="203" width="90" height="10" rx="5" class="fi"/><text x="280" y="212" text-anchor="end" class="fmu mono" direction="ltr">15/20</text>
+        </g>
+        <rect x="40" y="232" width="520" height="1" class="fl"/>
+        <g font-size="12" direction="ltr">
+          <text x="560" y="260" text-anchor="end" class="fmu">Mandatory evidence</text>
+          <text x="540" y="286" text-anchor="end" class="fi">React UI</text><text x="540" y="310" text-anchor="end" class="fi">Postgres schema</text><text x="540" y="334" text-anchor="end" class="fi">Role checks</text><text x="540" y="358" text-anchor="end" class="fi">Lean Design Pack</text>
+        </g>
+        <g><circle cx="552" cy="282" r="6" class="fc"/><circle cx="552" cy="306" r="6" class="fc"/><circle cx="552" cy="330" r="6" class="fc"/><circle cx="552" cy="354" r="6" class="fc"/></g>
+        <rect x="200" y="252" width="160" height="70" rx="8" class="fp"/>
+        <text x="280" y="274" text-anchor="middle" font-size="11" class="fmu" direction="ltr">No-AI test</text>
+        <text x="280" y="306" text-anchor="middle" font-size="24" class="fi disp">78%</text>
+        <rect x="214" y="330" width="132" height="6" rx="3" class="fl"/><rect x="243" y="330" width="103" height="6" rx="3" class="fi"/><rect x="254" y="326" width="2" height="14" class="fm"/>
+        <text x="255" y="354" text-anchor="middle" font-size="10" class="fm mono">70%</text>
+        <g transform="rotate(-8 110 300)">
+          <rect x="44" y="262" width="132" height="76" rx="8" class="nf" stroke="var(--c)" stroke-width="3"/>
+          <text x="110" y="296" text-anchor="middle" font-size="20" class="fc disp" direction="ltr">PASS</text>
+          <text x="110" y="320" text-anchor="middle" font-size="12" class="fc mono">82.5%</text>
+        </g>
+      </svg>
+      <figcaption><span>Expected outcome: <b>a documented scorecard for every gate</b></span><span>Figures are illustrative</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- REASSESSMENT -->
+<section class="slide" data-level="k" data-title="Reassessment">
+  <header class="s-head"><span class="tag">Reassessment</span><h2>Individual remediation that never takes time from the group</h2></header>
+  <div class="s-body row2 wide-r">
+    <ol class="steps">
+      <li><span class="k">1</span><span class="t"><b>Written gap analysis within two training days</b><span class="muted">Issued by the lead instructor for every failed gate.</span></span></li>
+      <li><span class="k">2</span><span class="t"><b>Personalized remediation plan</b><span class="muted">Delivered in protected coaching and review slots or documented onsite make-up sessions, never replacing core instruction owed to the group.</span></span></li>
+      <li><span class="k">3</span><span class="t"><b>Two reassessment attempts within 14 calendar days</b><span class="muted">The learner may attend general lessons, but dependent milestones are not approved and the learner cannot advance a level.</span></span></li>
+      <li><span class="k">4</span><span class="t"><b>Program director decides</b><span class="muted">Unresolved cases after the second attempt.</span></span></li>
+    </ol>
+    <div class="stack lg">
+      <div class="panel"><h3>Extra hours</h3><p class="xs muted">Remediation hours are logged separately and never double-counted within the standard 420 hours.</p></div>
+      <div class="panel"><h3>Who runs the reviews</h3><p class="xs muted">A teaching assistant manages parallel reviews so the lead instructor stays with the group.</p></div>
+      <div class="panel"><h3>Fair tests</h3><p class="xs muted">No-AI tests cover only concepts already taught and practiced, and the instructor publishes a skill blueprint for each gate in advance.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- AI PROTOCOL -->
+<section class="slide" data-level="k" data-title="AI protocol">
+  <div class="divider">
+    <div class="stack lg">
+      <span class="tag">AI-first and independent understanding</span>
+      <p class="d-title" style="font-size:4cqw">Every AI-assisted change goes through six steps</p>
+      <ol class="flow">
+        <li>Define the acceptance criterion</li><li>Propose implementation steps</li><li>Request bounded AI help</li><li>Inspect code and dependencies</li><li>Run the tests</li><li>Document verification and commit</li>
+      </ol>
+      <ul class="olist one">
+        <li>No secrets or real personal data in AI tools. Synthetic data and environment templates only</li>
+        <li>Verify that a package exists and check its licence before installing it</li>
+        <li>No-AI tests cover taught techniques only; a predeclared offline reference sheet may be allowed</li>
+        <li>Individual project variations: a role rule, a data edge case or a workflow condition</li>
+      </ul>
+    </div>
+    <figure class="art">
+      <svg viewBox="0 0 600 420" role="img" aria-label="Diff review of AI-generated code and an AI Work Log recording a rejected fabricated package">
+        <rect x="20" y="20" width="370" height="380" rx="8" class="fi"/>
+        <rect x="20" y="20" width="370" height="30" rx="8" class="fp" opacity=".14"/>
+        <rect x="32" y="27" width="110" height="18" rx="4" class="fp" opacity=".2"/>
+        <g class="mono" font-size="11" direction="ltr">
+          <text x="42" y="40" class="fp">service.ts</text>
+          <text x="36" y="80" class="fmu">12</text><text x="64" y="80" class="fp">async approve(id, user) {</text>
+          <rect x="20" y="90" width="370" height="22" class="fm" opacity=".25"/>
+          <text x="36" y="105" class="fmu">13</text><text x="54" y="105" class="fm">-</text><text x="76" y="105" class="fp">  const req = await repo.find(id)</text>
+          <rect x="20" y="114" width="370" height="22" class="fc" opacity=".25"/>
+          <text x="36" y="129" class="fmu">13</text><text x="54" y="129" class="fc">+</text><text x="76" y="129" class="fp">  const req = await repo.find(id)</text>
+          <rect x="20" y="138" width="370" height="22" class="fc" opacity=".25"/>
+          <text x="36" y="153" class="fmu">14</text><text x="54" y="153" class="fc">+</text><text x="76" y="153" class="fp">  if (!req) throw new NotFound()</text>
+          <rect x="20" y="162" width="370" height="22" class="fc" opacity=".25"/>
+          <text x="36" y="177" class="fmu">15</text><text x="54" y="177" class="fc">+</text><text x="76" y="177" class="fp">  if (user.role !== 'supervisor')</text>
+          <rect x="20" y="186" width="370" height="22" class="fc" opacity=".25"/>
+          <text x="36" y="201" class="fmu">16</text><text x="54" y="201" class="fc">+</text><text x="76" y="201" class="fp">    throw new Forbidden()</text>
+          <text x="36" y="232" class="fmu">17</text><text x="64" y="232" class="fp">  return repo.setStatus(id, 'approved')</text>
+          <text x="36" y="256" class="fmu">18</text><text x="64" y="256" class="fp">}</text>
+        </g>
+        <rect x="36" y="290" width="338" height="94" rx="6" class="fp" opacity=".1"/>
+        <g class="mono" font-size="11" direction="ltr">
+          <text x="50" y="314" class="fp">$ npm test -- approve</text>
+          <text x="50" y="336" class="fc">✓ <tspan class="fp">rejects non-supervisor (403)</tspan></text>
+          <text x="50" y="356" class="fc">✓ <tspan class="fp">returns 404 for missing id</tspan></text>
+          <text x="50" y="376" class="fc">✓ <tspan class="fp">approves valid request</tspan></text>
+        </g>
+        <rect x="404" y="20" width="176" height="380" rx="8" class="fs st"/>
+        <text x="492" y="50" text-anchor="middle" font-size="14" class="fi disp">AI Work Log</text>
+        <g font-size="11">
+          <text x="566" y="82" text-anchor="end" class="fmu" direction="ltr">Task</text>
+          <text x="566" y="100" text-anchor="end" class="fi" direction="ltr">Approval role check</text>
+          <rect x="418" y="112" width="148" height="1" class="fl"/>
+          <text x="566" y="134" text-anchor="end" class="fmu" direction="ltr">Verification</text>
+          <text x="566" y="152" text-anchor="end" class="fi" direction="ltr">3 tests passing</text>
+          <rect x="418" y="164" width="148" height="1" class="fl"/>
+          <text x="566" y="186" text-anchor="end" class="fmu" direction="ltr">Rejected suggestion</text>
+          <rect x="418" y="196" width="148" height="26" rx="4" class="tm"/>
+          <text x="492" y="214" text-anchor="middle" class="fm mono" direction="ltr">express-role-guardx</text>
+          <path d="M426 209 H558" stroke="var(--m)" stroke-width="1.5"/>
+          <text x="566" y="240" text-anchor="end" class="fmu" direction="ltr">Package not on npm</text>
+          <rect x="418" y="254" width="148" height="1" class="fl"/>
+          <text x="566" y="276" text-anchor="end" class="fmu" direction="ltr">Secrets</text>
+          <text x="566" y="294" text-anchor="end" class="fi" direction="ltr">None shared</text>
+          <rect x="418" y="306" width="148" height="1" class="fl"/>
+          <rect x="430" y="330" width="124" height="44" rx="6" class="tc"/>
+          <text x="492" y="357" text-anchor="middle" class="fi" direction="ltr">Instructor reviewed</text>
+        </g>
+      </svg>
+      <figcaption><span>Expected outcome: <b>inspected code and an AI log for every task</b></span><span>Illustrative example</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- STAFFING -->
+<section class="slide" data-level="k" data-title="Staffing and review">
+  <div class="divider">
+    <div class="stack lg">
+      <span class="tag">Staffing and review time</span>
+      <p class="d-title" style="font-size:4cqw">Per 25 learners: one lead instructor and one technical assistant</p>
+      <p class="d-en">Plus specialist reviewers at gates: full-stack in P0, code review in P1, security and DevOps in P2.</p>
+      <div class="calc">
+        <div class="cell"><b>15–20</b><span>min weekly review per learner</span></div><span class="op">×</span>
+        <div class="cell"><b>25</b><span>learners</span></div><span class="op">≈</span>
+        <div class="cell res"><b>6–9</b><span>review hours a week</span></div>
+      </div>
+      <p class="small muted">Add a 10–15 minute individual technical defense per learner at every gate. Adjust staffing for actual skill levels, repository review load, accessibility needs and reassessment volume.</p>
+    </div>
+    <figure class="art">
+      <svg viewBox="0 0 600 420" role="img" aria-label="Pull request review board: waiting, in review, done">
+        <g font-size="12" direction="ltr">
+          <rect x="404" y="20" width="176" height="380" rx="8" class="fs st"/><text x="566" y="48" text-anchor="end" class="fi disp">Waiting</text><text x="420" y="48" class="fmu mono" direction="ltr">9</text>
+          <rect x="212" y="20" width="176" height="380" rx="8" class="fs st"/><text x="374" y="48" text-anchor="end" class="fi disp">In review</text><text x="228" y="48" class="fmu mono" direction="ltr">4</text>
+          <rect x="20" y="20" width="176" height="380" rx="8" class="fs st"/><text x="182" y="48" text-anchor="end" class="fi disp">Done</text><text x="36" y="48" class="fmu mono" direction="ltr">12</text>
+        </g>
+        <g id="kanban"></g>
+      </svg>
+      <figcaption><span>Expected outcome: <b>scheduled weekly review of every repository</b></span><span>Illustrative example</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- LAUNCH -->
+<section class="slide" data-level="k" data-title="Decisions before launch">
+  <header class="s-head"><span class="tag">Launch readiness</span><h2>Decisions needed before the first cohort</h2></header>
+  <div class="s-body row2">
+    <table class="tablelite">
+      <thead><tr><th>Decision</th><th>Current treatment</th></tr></thead>
+      <tbody>
+        <tr><td>Technology stack</td><td class="xs muted">TypeScript, Node.js, React and PostgreSQL recommended; frameworks and test tooling need final approval</td></tr>
+        <tr><td>P1 and P2 schedules and hour split</td><td class="xs muted">420 hours per level; detailed splits proposed</td></tr>
+        <tr><td>V1 and V2 scope thresholds</td><td class="xs muted">Calibrated by each reference project's complexity</td></tr>
+        <tr><td>Weights and no-AI minimum</td><td class="xs muted">Rubrics proposed; formal approval required before delivery</td></tr>
+        <tr><td>Staffing and platform costs</td><td class="xs muted">To be budgeted and approved, including hosting</td></tr>
+        <tr><td>Employer review</td><td class="xs muted">Validate project briefs and skills with target employers</td></tr>
+      </tbody>
+    </table>
+    <ol class="steps">
+      <li><span class="k">1</span><span class="t"><b>Review target jobs</b><span class="muted xs">Sample remote and regional junior full-stack job descriptions; document required tools and skill gaps.</span></span></li>
+      <li><span class="k">2</span><span class="t"><b>Industry reviewers</b><span class="muted xs">At least two employer or engineering reviewers validate the rubric, code-review expectations and portfolio format.</span></span></li>
+      <li><span class="k">3</span><span class="t"><b>Confirm the environment</b><span class="muted xs">Laptops and software, deployment infrastructure, account permissions and AI tooling policy.</span></span></li>
+      <li><span class="k">4</span><span class="t"><b>Trainer dry-run</b><span class="muted xs">Run the week-4 vertical slice and the week 8, 12 and 16 gates in the exact learner environment.</span></span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section class="slide" data-level="k" data-title="Closing">
+  <div class="cover">
+    <div class="stack lg">
+      <div class="brand">TAQAT ACADEMY</div>
+      <p class="d-title" style="font-size:4.4cqw">One learner, one repository, one system that grows over a year</p>
+      <p class="sub">Learners start as complete beginners and finish with a deployed, monitored, tested enterprise system they can explain, modify and fix without AI.</p>
+      <p class="note">Curriculum edition: November 2026, for academic and operational review.</p>
+    </div>
+    <div class="lvtiles">
+      <div class="lvtile lvl-p0"><span class="c">MVP</span><div><b>P0 · Months 1–4</b><span>Two connected workflows, deployed for demo</span></div></div>
+      <div class="lvtile lvl-p1"><span class="c">V1</span><div><b>P1 · Months 5–8</b><span>Integrated, secure, maintainable</span></div></div>
+      <div class="lvtile lvl-p2"><span class="c">V2</span><div><b>P2 · Months 9–12</b><span>Deployed, monitored, recoverable</span></div></div>
+    </div>
+  </div>
+</section>
+
+</div>
+</main>
+
+<nav class="controls" aria-label="Slide navigation">
+  <button type="button" id="prev" aria-label="Previous slide"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
+  <div class="segs" id="segs"></div>
+  <span id="count">1</span>
+  <button type="button" id="next" aria-label="Next slide"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+  <button type="button" id="fs" aria-label="Full screen"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+</nav>
+</div>
+
+<script>
+(function(){
+  var NS='http://www.w3.org/2000/svg';
+  function el(tag,attrs,parent){var e=document.createElementNS(NS,tag);for(var k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+
+  // review board cards
+  var kb=document.getElementById('kanban');
+  if(kb){
+    var cols=[{x:404,n:4,c:'tm'},{x:212,n:3,c:'ty'},{x:20,n:4,c:'tc'}], pr=31;
+    cols.forEach(function(col){
+      for(var i=0;i<col.n;i++){var y=66+i*80;
+        el('rect',{x:col.x+12,y:y,width:152,height:68,rx:6,'class':'fp'},kb);
+        var t=el('text',{x:col.x+152,y:y+22,'text-anchor':'end','font-size':12,'class':'fi mono',direction:'ltr'},kb);t.textContent='PR #'+(pr--);
+        el('rect',{x:col.x+64,y:y+32,width:88,height:6,rx:3,'class':'fl'},kb);
+        el('rect',{x:col.x+84,y:y+44,width:68,height:6,rx:3,'class':'fl'},kb);
+        el('circle',{cx:col.x+30,cy:y+20,r:9,'class':col.c},kb);
+        el('rect',{x:col.x+20,y:y+46,width:40,height:12,rx:6,'class':col.c},kb);
+      }
+    });
+  }
+
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var total=slides.length, cur=0;
+  var segs=document.getElementById('segs'), count=document.getElementById('count');
+  slides.forEach(function(s,i){
+    var m=document.createElement('div');m.className='marks';m.setAttribute('aria-hidden','true');m.innerHTML='<i></i><i></i><i></i><i></i>';s.appendChild(m);
+    var f=document.createElement('footer');f.className='s-foot';
+    f.innerHTML='<span class="who"><span class="cmyk" aria-hidden="true"><b></b><b></b><b></b><b></b></span><span>TAQAT Academy · AI Solo System Builder</span></span><span class="num">'+String(i+1).padStart(2,'0')+' / '+total+'</span>';
+    s.appendChild(f);
+    var b=document.createElement('button');b.type='button';b.dataset.l=s.dataset.level;b.title=s.dataset.title||('Slide '+(i+1));b.setAttribute('aria-label',b.title);
+    b.addEventListener('click',function(){go(i)});segs.appendChild(b);
+  });
+  function stacked(){return window.matchMedia('(max-width: 820px)').matches}
+  function go(n){
+    n=Math.max(0,Math.min(total-1,n));
+    slides[cur].classList.remove('is-active');
+    cur=n; slides[cur].classList.add('is-active');
+    slides.forEach(function(s,i){ if(!stacked()) s.setAttribute('aria-hidden', i===cur?'false':'true'); else s.removeAttribute('aria-hidden'); });
+    [].forEach.call(segs.children,function(b,i){b.classList.toggle('on',i===cur)});
+    count.textContent=(cur+1)+' / '+total;
+    try{history.replaceState(null,'','#s'+(cur+1))}catch(e){}
+  }
+  document.getElementById('next').addEventListener('click',function(){go(cur+1)});
+  document.getElementById('prev').addEventListener('click',function(){go(cur-1)});
+  document.getElementById('fs').addEventListener('click',function(){
+    try{ if(!document.fullscreenElement){var p=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen(); if(p&&p.catch)p.catch(function(){});} else document.exitFullscreen(); }catch(e){}
+  });
+  document.addEventListener('keydown',function(e){
+    if(stacked())return;
+    var k=e.key;
+    if(k==='ArrowRight'||k==='PageDown'||k===' '){e.preventDefault();go(cur+1)}
+    else if(k==='ArrowLeft'||k==='PageUp'){e.preventDefault();go(cur-1)}
+    else if(k==='Home'){go(0)} else if(k==='End'){go(total-1)}
+  });
+  var sx=null, st=document.getElementById('stage');
+  st.addEventListener('touchstart',function(e){sx=e.touches[0].clientX},{passive:true});
+  st.addEventListener('touchend',function(e){if(sx===null||stacked())return;var dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>50)go(dx<0?cur+1:cur-1);sx=null});
+  function fromHash(){var m=/^#s(\d+)$/.exec(location.hash);if(m)go(parseInt(m[1],10)-1);else go(cur)}
+  window.addEventListener('hashchange',fromHash);
+  fromHash();
+})();
+</script>
+
+</body></html>
